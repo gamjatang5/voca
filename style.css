@@ -132,7 +132,6 @@ button {
 .correct { color: #28a745; }
 .wrong { color: #dc3545; }
 
-/* 단어장 레이아웃 관련 스타일 */
 .day-section {
     margin-bottom: 25px;
     border: 1px solid var(--border);
@@ -158,7 +157,6 @@ button {
     border-bottom: 1px solid var(--border);
 }
 
-/* 기록 항목 스타일 */
 .history-item {
     padding: 12px;
     border-bottom: 1px solid var(--border);

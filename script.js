@@ -43,15 +43,18 @@ fetch('data.csv')
     });
 
 function checkWrongHistory() {
-    const saved = localStorage.getItem('wrongWords');
-    if (saved) {
-        wrongWords = JSON.parse(saved);
-        const retryBtn = document.getElementById('retry-btn');
-        if (wrongWords.length > 0) {
-            retryBtn.classList.remove('hidden');
-        } else {
-            retryBtn.classList.add('hidden');
+    try {
+        const saved = localStorage.getItem('wrongWords');
+        if (saved) {
+            wrongWords = JSON.parse(saved);
+            const retryBtn = document.getElementById('retry-btn');
+            if (retryBtn) {
+                if (wrongWords.length > 0) retryBtn.classList.remove('hidden');
+                else retryBtn.classList.add('hidden');
+            }
         }
+    } catch (e) {
+        console.error(e);
     }
 }
 
@@ -59,7 +62,8 @@ function startTest(isRetry) {
     let pool = isRetry ? [...wrongWords] : [...allWords];
     
     if (!isRetry) {
-        const targetDays = document.getElementById('day-input').value.split(',').map(d => d.trim());
+        const dayInput = document.getElementById('day-input');
+        const targetDays = dayInput ? dayInput.value.split(',').map(d => d.trim()) : ["1"];
         pool = pool.filter(w => targetDays.includes(w.day));
     }
 
@@ -68,11 +72,13 @@ function startTest(isRetry) {
         return;
     }
 
-    if (document.getElementById('shuffle-input').checked) {
+    const shuffleInput = document.getElementById('shuffle-input');
+    if (shuffleInput && shuffleInput.checked) {
         pool.sort(() => Math.random() - 0.5);
     }
 
-    const count = parseInt(document.getElementById('quiz-count').value) || 10;
+    const quizCountInput = document.getElementById('quiz-count');
+    const count = quizCountInput ? (parseInt(quizCountInput.value) || 10) : 10;
     quizWords = pool.slice(0, count);
     currentIdx = 0;
     score = 0;
@@ -86,40 +92,50 @@ function showQuestion() {
     if (currentIdx >= quizWords.length) return showResult();
 
     isSubmitted = false;
-    document.getElementById('submit-btn').classList.remove('hidden');
-    document.getElementById('next-btn').classList.add('hidden');
+    const submitBtn = document.getElementById('submit-btn');
+    const nextBtn = document.getElementById('next-btn');
+    if (submitBtn) submitBtn.classList.remove('hidden');
+    if (nextBtn) nextBtn.classList.add('hidden');
 
     const q = quizWords[currentIdx];
-    const hintLen = parseInt(document.getElementById('hint-count').value) || 2;
-    const reqSynCount = parseInt(document.getElementById('synonym-count-input').value) || 1;
+    const hintCountInput = document.getElementById('hint-count');
+    const synonymCountInput = document.getElementById('synonym-count-input');
+    
+    const hintLen = hintCountInput ? (parseInt(hintCountInput.value) || 2) : 2;
+    const reqSynCount = synonymCountInput ? (parseInt(synonymCountInput.value) || 1) : 1;
 
-    document.getElementById('quiz-progress').innerText = `문제: ${currentIdx + 1} / ${quizWords.length}`;
-    document.getElementById('quiz-word').innerText = q.word;
-    document.getElementById('quiz-pos').innerText = q.pos;
+    const progressEl = document.getElementById('quiz-progress');
+    const wordEl = document.getElementById('quiz-word');
+    const posEl = document.getElementById('quiz-pos');
+
+    if (progressEl) progressEl.innerText = `문제: ${currentIdx + 1} / ${quizWords.length}`;
+    if (wordEl) wordEl.innerText = q.word;
+    if (posEl) posEl.innerText = q.pos;
 
     currentTargetSynonyms = q.synonyms.slice(0, reqSynCount);
 
     const container = document.getElementById('inputs-container');
-    container.innerHTML = '';
+    if (container) {
+        container.innerHTML = '';
+        currentTargetSynonyms.forEach((syn, index) => {
+            const hint = syn.slice(0, hintLen) + '_'.repeat(Math.max(0, syn.length - hintLen));
+            const hintFormatted = hint.split('').join(' ');
 
-    currentTargetSynonyms.forEach((syn, index) => {
-        const hint = syn.slice(0, hintLen) + '_'.repeat(Math.max(0, syn.length - hintLen));
-        const hintFormatted = hint.split('').join(' ');
+            const row = document.createElement('div');
+            row.className = 'synonym-row';
+            row.innerHTML = `
+                <label>동의어 ${index + 1} 힌트: ${hintFormatted}</label>
+                <div class="input-container">
+                    <input type="text" class="quiz-answer-input" data-index="${index}" placeholder="철자 입력" onkeydown="handleKeyDown(event)">
+                    <span class="feedback" id="feedback-${index}"></span>
+                </div>
+            `;
+            container.appendChild(row);
+        });
 
-        const row = document.createElement('div');
-        row.className = 'synonym-row';
-        row.innerHTML = `
-            <label>동의어 ${index + 1} 힌트: ${hintFormatted}</label>
-            <div class="input-container">
-                <input type="text" class="quiz-answer-input" data-index="${index}" placeholder="철자 입력" onkeydown="handleKeyDown(event)">
-                <span class="feedback" id="feedback-${index}"></span>
-            </div>
-        `;
-        container.appendChild(row);
-    });
-
-    const firstInput = container.querySelector('input');
-    if (firstInput) firstInput.focus();
+        const firstInput = container.querySelector('input');
+        if (firstInput) firstInput.focus();
+    }
 }
 
 function handleKeyDown(event) {
@@ -141,18 +157,20 @@ function submitAnswer() {
     inputElements.forEach(inputEl => {
         const idx = parseInt(inputEl.getAttribute('data-index'));
         const userAns = inputEl.value.trim().toLowerCase();
-        const correctAns = currentTargetSynonyms[idx].toLowerCase();
+        const correctAns = currentTargetSynonyms[idx] ? currentTargetSynonyms[idx].toLowerCase() : '';
         const feedbackEl = document.getElementById(`feedback-${idx}`);
 
         inputEl.disabled = true;
 
-        if (userAns === correctAns) {
-            feedbackEl.className = 'feedback correct';
-            feedbackEl.innerText = '⭕ 정답';
-        } else {
-            allCorrect = false;
-            feedbackEl.className = 'feedback wrong';
-            feedbackEl.innerText = `❌ 오답 (정답: ${currentTargetSynonyms[idx]})`;
+        if (feedbackEl) {
+            if (userAns === correctAns && correctAns !== '') {
+                feedbackEl.className = 'feedback correct';
+                feedbackEl.innerText = '⭕ 정답';
+            } else {
+                allCorrect = false;
+                feedbackEl.className = 'feedback wrong';
+                feedbackEl.innerText = `❌ 오답 (정답: ${currentTargetSynonyms[idx] || ''})`;
+            }
         }
     });
 
@@ -160,17 +178,25 @@ function submitAnswer() {
     if (allCorrect) {
         score++;
     } else {
-        if (!wrongWords.some(w => w.word === q.word)) {
+        if (q && !wrongWords.some(w => w.word === q.word)) {
             wrongWords.push(q);
         }
     }
 
-    localStorage.setItem('wrongWords', JSON.stringify(wrongWords));
+    try {
+        localStorage.setItem('wrongWords', JSON.stringify(wrongWords));
+    } catch (e) {
+        console.error(e);
+    }
     
     isSubmitted = true;
-    document.getElementById('submit-btn').classList.add('hidden');
-    document.getElementById('next-btn').classList.remove('hidden');
-    document.getElementById('next-btn').focus();
+    const submitBtn = document.getElementById('submit-btn');
+    const nextBtn = document.getElementById('next-btn');
+    if (submitBtn) submitBtn.classList.add('hidden');
+    if (nextBtn) {
+        nextBtn.classList.remove('hidden');
+        nextBtn.focus();
+    }
 }
 
 function nextQuestion() {
@@ -178,7 +204,6 @@ function nextQuestion() {
     showQuestion();
 }
 
-// 중도 종료 기능 (푼 문항만 계산하여 기록 저장)
 function exitQuiz() {
     if (confirm('테스트를 중단하시겠습니까? 현재까지 푼 문항만 기록에 반영됩니다.')) {
         showResult(true); 
@@ -186,27 +211,33 @@ function exitQuiz() {
 }
 
 function saveQuizRecord(totalCount, correctCount) {
-    const history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
-    const now = new Date();
-    const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-    
-    history.unshift({
-        date: dateStr,
-        total: totalCount,
-        correct: correctCount
-    });
-    
-    localStorage.setItem('quizHistory', JSON.stringify(history));
+    try {
+        const history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        
+        history.unshift({
+            date: dateStr,
+            total: totalCount,
+            correct: correctCount
+        });
+        
+        localStorage.setItem('quizHistory', JSON.stringify(history));
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 function showResult(isInterrupted = false) {
     showScreen('result-screen');
-    // 중단 시 현재 번호 전까지를 전체 개수로 판단 (단, 제출 완료 안 한 문제는 문항 수에서 제외)
-    const totalAttempted = isInterrupted ? (isSubmitted ? currentIdx + 1 : currentIdx) : quizWords.length;
+    const totalAttempted = isInterrupted ? (isSubmitted ? currentIdx + 1 : currentIdx) : (quizWords ? quizWords.length : 0);
     
-    document.getElementById('result-score').innerText = isInterrupted 
-        ? `테스트가 중단되었습니다.\n푼 문제: ${totalAttempted}문제 중 ${score}문제 맞춤`
-        : `테스트 완료!\n총 ${totalAttempted}문제 중 ${score}문제 맞추셨습니다.`;
+    const scoreEl = document.getElementById('result-score');
+    if (scoreEl) {
+        scoreEl.innerText = isInterrupted 
+            ? `테스트가 중단되었습니다.\n푼 문제: ${totalAttempted}문제 중 ${score}문제 맞춤`
+            : `테스트 완료!\n총 ${totalAttempted}문제 중 ${score}문제 맞추셨습니다.`;
+    }
         
     if (totalAttempted > 0) {
         saveQuizRecord(totalAttempted, score);
@@ -214,17 +245,16 @@ function showResult(isInterrupted = false) {
     checkWrongHistory();
 }
 
-// DAY별 그룹화하여 단어장 출력하는 기능
 function viewWordList() {
     showScreen('wordlist-screen');
     const content = document.getElementById('wordlist-content');
+    if (!content) return;
     
     if (allWords.length === 0) {
         content.innerHTML = '<p>불러온 단어가 없습니다. data.csv 파일을 확인해주세요.</p>';
         return;
     }
 
-    // DAY 기준으로 데이터 묶기
     const grouped = {};
     allWords.forEach(w => {
         if (!grouped[w.day]) grouped[w.day] = [];
@@ -232,7 +262,6 @@ function viewWordList() {
     });
 
     let html = '';
-    // DAY 정렬 정렬 후 화면 출력 생성
     Object.keys(grouped).sort((a, b) => Number(a) - Number(b)).forEach(day => {
         html += `<div class="day-section">`;
         html += `<h4 class="day-header">DAY ${day}</h4>`;
@@ -253,7 +282,14 @@ function viewWordList() {
 function viewHistory() {
     showScreen('history-screen');
     const content = document.getElementById('history-content');
-    const history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+    if (!content) return;
+
+    let history = [];
+    try {
+        history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+    } catch (e) {
+        console.error(e);
+    }
 
     if (history.length === 0) {
         content.innerHTML = '<p>저장된 테스트 기록이 없습니다.</p>';
@@ -262,15 +298,19 @@ function viewHistory() {
 
     content.innerHTML = history.map(h => `
         <div class="history-item">
-            <strong>일시:</strong> ${h.date}<br>
-            <strong>결과:</strong> ${h.total}문제 중 ${h.correct}문제 정답 (${Math.round((h.correct/h.total)*100)}%)
+            <strong>일시:</strong> ${h.date || ''}<br>
+            <strong>결과:</strong> ${h.total || 0}문제 중 ${h.correct || 0}문제 정답 (${h.total ? Math.round((h.correct/h.total)*100) : 0}%)
         </div>
     `).join('');
 }
 
 function clearHistory() {
     if (confirm('모든 테스트 기록을 삭제하시겠습니까?')) {
-        localStorage.removeItem('quizHistory');
+        try {
+            localStorage.removeItem('quizHistory');
+        } catch (e) {
+            console.error(e);
+        }
         viewHistory();
     }
 }
@@ -281,10 +321,13 @@ function showSetupView() {
 }
 
 function showScreen(id) {
-    ['setup-screen', 'quiz-screen', 'result-screen', 'wordlist-screen', 'history-screen'].forEach(s => {
-        document.getElementById(s).classList.add('hidden');
+    const screens = ['setup-screen', 'quiz-screen', 'result-screen', 'wordlist-screen', 'history-screen'];
+    screens.forEach(s => {
+        const el = document.getElementById(s);
+        if (el) el.classList.add('hidden');
     });
-    document.getElementById(id).classList.remove('hidden');
+    const target = document.getElementById(id);
+    if (target) target.classList.remove('hidden');
 }
 
 function toggleDarkMode() {
