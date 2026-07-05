@@ -5,6 +5,8 @@ let currentIdx = 0;
 let score = 0;
 let currentTargetSynonyms = [];
 let isSubmitted = false;
+let currentTestType = "동의어 철자";
+let currentTestDays = "";
 
 function parseCSV(text) {
     const lines = text.split(/\r?\n/);
@@ -62,13 +64,20 @@ function startTest(isRetry) {
     let pool = isRetry ? [...wrongWords] : [...allWords];
     
     if (!isRetry) {
+        currentTestType = "동의어 철자";
         const dayInput = document.getElementById('day-input');
-        const targetDays = dayInput ? dayInput.value.split(',').map(d => d.trim()) : ["1"];
+        currentTestDays = dayInput ? dayInput.value.trim() : "1";
+        const targetDays = currentTestDays.split(',').map(d => d.trim());
         pool = pool.filter(w => targetDays.includes(w.day));
+    } else {
+        currentTestType = "동의어 철자 오답";
+        // 오답 리스트에 포함된 단어들의 고유 DAY 수집
+        const uniqueDays = [...new Set(pool.map(w => w.day))];
+        currentTestDays = uniqueDays.join(',');
     }
 
     if (pool.length === 0) {
-        alert('해당하는 DAY의 단어가 없거나 데이터를 불러오지 못했습니다.');
+        alert('해당하는 단어가 없거나 데이터를 불러오지 못했습니다.');
         return;
     }
 
@@ -78,7 +87,13 @@ function startTest(isRetry) {
     }
 
     const quizCountInput = document.getElementById('quiz-count');
-    const count = quizCountInput ? (parseInt(quizCountInput.value) || 10) : 10;
+    let count = quizCountInput ? (parseInt(quizCountInput.value) || 60) : 60;
+    
+    // 선택한 문제 수가 해당 DAY의 단어 수보다 많을 경우 전체 단어 수로 맞춤
+    if (count > pool.length) {
+        count = pool.length;
+    }
+    
     quizWords = pool.slice(0, count);
     currentIdx = 0;
     score = 0;
@@ -101,8 +116,8 @@ function showQuestion() {
     const hintCountInput = document.getElementById('hint-count');
     const synonymCountInput = document.getElementById('synonym-count-input');
     
-    const hintLen = hintCountInput ? (parseInt(hintCountInput.value) || 2) : 2;
-    const reqSynCount = synonymCountInput ? (parseInt(synonymCountInput.value) || 1) : 1;
+    const hintLen = hintCountInput ? (parseInt(hintCountInput.value) || 1) : 1;
+    const reqSynCount = synonymCountInput ? (parseInt(synonymCountInput.value) || 2) : 2;
 
     const progressEl = document.getElementById('quiz-progress');
     const wordEl = document.getElementById('quiz-word');
@@ -218,6 +233,8 @@ function saveQuizRecord(totalCount, correctCount) {
         
         history.unshift({
             date: dateStr,
+            type: currentTestType,
+            days: currentTestDays,
             total: totalCount,
             correct: correctCount
         });
@@ -269,7 +286,7 @@ function viewWordList() {
             html += `
                 <div class="word-item">
                     <strong>${w.word}</strong> (${w.pos})<br>
-                    <span style="color: var(--secondary)">동의어: ${w.synonyms.join(', ')}</span>
+                    <span style="color: var(--secondary)">${w.synonyms.join(', ')}</span>
                 </div>
             `;
         });
@@ -299,9 +316,43 @@ function viewHistory() {
     content.innerHTML = history.map(h => `
         <div class="history-item">
             <strong>일시:</strong> ${h.date || ''}<br>
+            <strong>종류:</strong> ${h.type || '동의어 철자'} (DAY ${h.days || ''})<br>
             <strong>결과:</strong> ${h.total || 0}문제 중 ${h.correct || 0}문제 정답 (${h.total ? Math.round((h.correct/h.total)*100) : 0}%)
         </div>
     `).join('');
+}
+
+function exportHistory() {
+    let history = [];
+    try {
+        history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+    } catch (e) {
+        console.error(e);
+    }
+
+    if (history.length === 0) {
+        alert('내보낼 기록이 없습니다.');
+        return;
+    }
+
+    let textContent = "영어 단어 테스트 기록\n====================\n\n";
+    history.forEach((h, idx) => {
+        textContent += `[기록 ${idx + 1}]\n`;
+        textContent += `일시: ${h.date || ''}\n`;
+        textContent += `종류: ${h.type || '동의어 철자'} (DAY: ${h.days || ''})\n`;
+        textContent += `결과: ${h.total || 0}문제 중 ${h.correct || 0}문제 맞춤 (${h.total ? Math.round((h.correct/h.total)*100) : 0}%)\n`;
+        textContent += `--------------------\n`;
+    });
+
+    const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `word_test_history_${new Date().toISOString().slice(0,10)}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 }
 
 function clearHistory() {
