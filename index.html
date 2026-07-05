@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head> 
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>영어 단어 테스트</title>
@@ -8,12 +8,15 @@
 </head>
 <body>
 
-    <div class="top-bar">
-        <button onclick="toggleDarkMode()">다크모드 토글</button>
+    <!-- 상단 고정 바 (기호 버튼 적용) -->
+    <div id="global-header" class="top-bar">
+        <button id="nav-back-btn" onclick="handleHeaderBack()" class="icon-btn hidden" title="뒤로가기">←</button>
+        <div style="flex-grow: 1;"></div>
+        <button onclick="toggleDarkMode()" class="icon-btn" title="다크모드">🌙</button>
     </div>
 
     <!-- 설정 화면 -->
-    <div id="setup-screen" class="card">
+    <div id="setup-screen" class="card view-screen">
         <h2>단어 테스트 설정</h2>
         <div class="form-group">
             <label>DAY 선택 (예: 1 또는 1,2,3):</label>
@@ -25,7 +28,12 @@
         </div>
         <div class="form-group">
             <label>힌트 글자 수:</label>
-            <input type="number" id="hint-count" value="1">
+            <select id="hint-count-input">
+                <option value="1" selected>1글자</option>
+                <option value="2">2글자</option>
+                <option value="3">3글자</option>
+                <option value="half">전체 글자수 절반</option>
+            </select>
         </div>
         <div class="form-group">
             <label>테스트할 동의어 개수:</label>
@@ -41,49 +49,49 @@
         </div>
         <button onclick="startTest(false)" class="btn-primary">테스트 시작</button>
         <button onclick="startTest(true)" id="retry-btn" class="btn-secondary hidden">오답만 다시 풀기</button>
-        <button onclick="viewWordList()" class="btn-secondary">단어장 보기</button>
-        <button onclick="viewHistory()" class="btn-secondary">테스트 기록 보기</button>
+        <button onclick="navigateTo('wordlist-screen')" class="btn-secondary">단어장 보기</button>
+        <button onclick="navigateTo('history-screen')" class="btn-secondary">테스트 기록 보기</button>
     </div>
 
     <!-- 테스트 화면 -->
-    <div id="quiz-screen" class="card hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h3 id="quiz-progress" style="margin: 0;"></h3>
-            <button onclick="exitQuiz()" class="btn-danger" style="width: auto; margin: 0; padding: 5px 10px; font-size: 0.85rem;">테스트 중단</button>
+    <div id="quiz-screen" class="card view-screen hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 id="quiz-progress" style="margin: 0; font-size: 1rem; color: var(--secondary);"></h3>
+            <button onclick="exitQuiz()" class="btn-danger" style="width: auto; margin: 0; padding: 5px 12px; font-size: 0.85rem;">테스트 중단</button>
         </div>
+        
+        <!-- 디자인 전면 수정 영역 -->
         <div class="quiz-info">
-            <p>문제 단어: <strong id="quiz-word"></strong></p>
-            <p>품사: <span id="quiz-pos"></span></p>
+            <div id="quiz-word" class="display-word"></div>
+            <div id="quiz-pos" class="display-pos"></div>
         </div>
         
         <div id="inputs-container"></div>
 
-        <button id="submit-btn" onclick="submitAnswer()" class="btn-primary" style="margin-top: 15px;">제출</button>
-        <button id="next-btn" onclick="nextQuestion()" class="btn-success hidden" style="margin-top: 15px;">다음 문제</button>
+        <button id="submit-btn" onclick="submitAnswer()" class="btn-primary" style="margin-top: 20px;">제출</button>
+        <button id="next-btn" onclick="nextQuestion()" class="btn-success hidden" style="margin-top: 20px;">다음 문제</button>
     </div>
 
     <!-- 결과 화면 -->
-    <div id="result-screen" class="card hidden">
+    <div id="result-screen" class="card view-screen hidden">
         <h2>테스트 결과</h2>
-        <p id="result-score"></p>
-        <button onclick="showSetupView()" class="btn-primary">처음으로</button>
+        <p id="result-score" style="font-size: 1.2rem; white-space: pre-line; margin-bottom: 20px;"></p>
+        <button onclick="navigateTo('setup-screen')" class="btn-primary">처음으로</button>
     </div>
 
     <!-- 단어장 화면 -->
-    <div id="wordlist-screen" class="card hidden">
+    <div id="wordlist-screen" class="card view-screen hidden">
         <h2>단어장</h2>
-        <button onclick="showSetupView()" class="btn-secondary" style="margin-bottom: 15px;">뒤로가기</button>
         <div id="wordlist-content"></div>
     </div>
 
     <!-- 기록 화면 -->
-    <div id="history-screen" class="card hidden">
+    <div id="history-screen" class="card view-screen hidden">
         <h2>테스트 기록</h2>
-        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-            <button onclick="exportHistory()" class="btn-success" style="padding: 8px; margin: 0;">기록 파일 내보내기 (.txt)</button>
-            <button onclick="clearHistory()" class="btn-danger" style="padding: 8px; margin: 0;">전체 기록 삭제</button>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <button onclick="exportHistory()" class="btn-success" style="padding: 8px; margin: 0; font-size: 0.9rem;">기록 파일 내보내기 (.txt)</button>
+            <button onclick="clearHistory()" class="btn-danger" style="padding: 8px; margin: 0; font-size: 0.9rem;">전체 기록 삭제</button>
         </div>
-        <button onclick="showSetupView()" class="btn-secondary" style="margin-bottom: 15px;">뒤로가기</button>
         <div id="history-content"></div>
     </div>
 

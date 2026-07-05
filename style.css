@@ -1,23 +1,25 @@
 :root {
     --bg: #ffffff;
-    --text: #333333;
-    --card: #f8f9fa;
-    --border: #cccccc;
+    --text: #222222;
+    --card: #fdfdfd;
+    --border: #e2e8f0;
     --primary: #007bff;
-    --secondary: #6c757d;
+    --secondary: #718096;
     --success: #28a745;
     --danger: #dc3545;
+    --header-bg: rgba(255, 255, 255, 0.9);
 }
 
 [data-theme="dark"] {
     --bg: #121212;
-    --text: #e0e0e0;
-    --card: #1e1e1e;
-    --border: #444444;
-    --primary: #375a7f;
-    --secondary: #4f5d73;
-    --success: #218838;
-    --danger: #bd2130;
+    --text: #e2e8f0;
+    --card: #1a202c;
+    --border: #2d3748;
+    --primary: #3182ce;
+    --secondary: #a0aec0;
+    --success: #38a169;
+    --danger: #e53e3e;
+    --header-bg: rgba(18, 18, 18, 0.9);
 }
 
 body {
@@ -26,140 +28,186 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     max-width: 600px;
     margin: 0 auto;
-    padding: 20px;
-    transition: background 0.3s, color 0.3s;
+    padding: 70px 20px 20px 20px; /* 상단 고정바 공간 확보 */
+    transition: background 0.2s, color 0.2s;
 }
 
+/* 스마트 상단바 디자인 (고정형) */
 .top-bar {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 600px;
+    height: 50px;
+    background-color: var(--header-bg);
+    backdrop-filter: blur(8px);
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: 15px;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border);
+}
+
+/* 기호 형태의 아이콘 버튼 */
+.icon-btn {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1.4rem;
+    cursor: pointer;
+    width: auto;
+    margin: 0;
+    padding: 5px 10px;
+}
+.icon-btn:hover {
+    opacity: 0.7;
 }
 
 .card {
     background-color: var(--card);
     border: 1px solid var(--border);
     padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
 
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
 
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.form-group.checkbox label {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.95rem; }
 
 input[type="text"], input[type="number"], select {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     background: var(--bg);
     color: var(--text);
     box-sizing: border-box;
+    font-size: 1rem;
 }
 
-input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-}
+input[type="checkbox"] { width: 18px; height: 18px; }
+.form-group checkbox label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 
 button {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     font-size: 1rem;
     font-weight: bold;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    transition: opacity 0.15s;
 }
+button:active { opacity: 0.8; }
 
 .btn-primary { background-color: var(--primary); color: white; }
 .btn-secondary { background-color: var(--secondary); color: white; }
 .btn-success { background-color: var(--success); color: white; }
 .btn-danger { background-color: var(--danger); color: white; }
 
+/* 테스트 화면 전면 타이포그래피 변경 */
 .quiz-info {
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    line-height: 1.6;
+    text-align: center;
+    margin: 25px 0;
+    padding-bottom: 20px;
+    border-bottom: 2px dashed var(--border);
+}
+.display-word {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+.display-pos {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--secondary);
 }
 
 .synonym-row {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
-
 .synonym-row label {
     display: block;
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--secondary);
+    margin-bottom: 6px;
+}
+
+/* 힌트 글자 스타일 강조 */
+.hint-text {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.3rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    color: var(--text);
 }
 
 .input-container {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    margin-top: 4px;
 }
-
 .input-container input {
     flex: 1;
 }
 
 .feedback {
     font-weight: bold;
-    font-size: 0.95rem;
+    font-size: 1rem;
     white-space: nowrap;
 }
+.correct { color: var(--success); }
+.wrong { color: var(--danger); }
 
-.correct { color: #28a745; }
-.wrong { color: #dc3545; }
-
+/* 단어장 레이아웃 */
 .day-section {
     margin-bottom: 25px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
 }
-
 .day-header {
-    background-color: var(--secondary);
-    color: white;
-    padding: 10px 15px;
+    background-color: var(--border);
+    color: var(--text);
+    padding: 12px 18px;
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: 700;
     margin: 0;
 }
-
 .word-item {
-    padding: 12px 15px;
+    padding: 14px 18px;
     background-color: var(--card);
 }
-
 .word-item:not(:last-child) {
     border-bottom: 1px solid var(--border);
 }
+.word-item strong {
+    font-size: 1.1rem;
+}
+.word-item .pos-tag {
+    font-size: 0.85rem;
+    color: var(--secondary);
+    margin-left: 6px;
+    font-style: italic;
+}
+.word-item .syn-list {
+    display: block;
+    margin-top: 6px;
+    font-size: 1rem;
+    color: var(--secondary);
+}
 
 .history-item {
-    padding: 12px;
+    padding: 14px;
     border-bottom: 1px solid var(--border);
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.6;
 }

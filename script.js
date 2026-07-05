@@ -11,20 +11,16 @@ let currentTestDays = "";
 function parseCSV(text) {
     const lines = text.split(/\r?\n/);
     const result = [];
-    
     for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
-        
         const parts = line.split(',').map(item => item.replace(/^["']|["']$/g, '').trim());
-        
         if (parts.length >= 3) {
-            const synonyms = parts.slice(3).filter(Boolean);
             result.push({
                 day: parts[0],
                 word: parts[1],
                 pos: parts[2],
-                synonyms: synonyms
+                synonyms: parts.slice(3).filter(Boolean)
             });
         }
     }
@@ -32,17 +28,9 @@ function parseCSV(text) {
 }
 
 fetch('data.csv')
-    .then(res => {
-        if (!res.ok) throw new Error('data.csv 파일을 찾을 수 없습니다.');
-        return res.text();
-    })
-    .then(text => {
-        allWords = parseCSV(text);
-        checkWrongHistory();
-    })
-    .catch(err => {
-        alert(err.message + '\nindex.html과 같은 폴더에 data.csv가 있는지 확인해주세요.');
-    });
+    .then(res => { if (!res.ok) throw new Error(); return res.text(); })
+    .then(text => { allWords = parseCSV(text); checkWrongHistory(); })
+    .catch(() => alert('data.csv 파일을 불러오지 못했습니다.'));
 
 function checkWrongHistory() {
     try {
@@ -55,14 +43,49 @@ function checkWrongHistory() {
                 else retryBtn.classList.add('hidden');
             }
         }
-    } catch (e) {
-        console.error(e);
+    } catch (e) {}
+}
+
+// 브라우저 마우스/아이폰 스와이프 뒤로가기 연동 (History API 제어)
+window.addEventListener('popstate', (event) => {
+    if (event.state && event.state.screen) {
+        showScreen(event.state.screen, false);
+    } else {
+        showScreen('setup-screen', false);
     }
+});
+
+function navigateTo(screenId) {
+    history.pushState({ screen: screenId }, '', '');
+    showScreen(screenId, true);
+}
+
+function handleHeaderBack() {
+    window.history.back();
+}
+
+function showScreen(id, updateHistory = true) {
+    const screens = ['setup-screen', 'quiz-screen', 'result-screen', 'wordlist-screen', 'history-screen'];
+    screens.forEach(s => {
+        const el = document.getElementById(s);
+        if (el) el.classList.add('hidden');
+    });
+    
+    const target = document.getElementById(id);
+    if (target) target.classList.remove('hidden');
+
+    const backBtn = document.getElementById('nav-back-btn');
+    if (backBtn) {
+        if (id === 'setup-screen') backBtn.classList.add('hidden');
+        else backBtn.classList.remove('hidden');
+    }
+
+    if (id === 'wordlist-screen') viewWordList();
+    if (id === 'history-screen') viewHistory();
 }
 
 function startTest(isRetry) {
     let pool = isRetry ? [...wrongWords] : [...allWords];
-    
     if (!isRetry) {
         currentTestType = "동의어 철자";
         const dayInput = document.getElementById('day-input');
@@ -71,35 +94,27 @@ function startTest(isRetry) {
         pool = pool.filter(w => targetDays.includes(w.day));
     } else {
         currentTestType = "동의어 철자 오답";
-        // 오답 리스트에 포함된 단어들의 고유 DAY 수집
-        const uniqueDays = [...new Set(pool.map(w => w.day))];
-        currentTestDays = uniqueDays.join(',');
+        currentTestDays = [...new Set(pool.map(w => w.day))].join(',');
     }
 
     if (pool.length === 0) {
-        alert('해당하는 단어가 없거나 데이터를 불러오지 못했습니다.');
+        alert('해당하는 단어가 없습니다.');
         return;
     }
 
     const shuffleInput = document.getElementById('shuffle-input');
-    if (shuffleInput && shuffleInput.checked) {
-        pool.sort(() => Math.random() - 0.5);
-    }
+    if (shuffleInput && shuffleInput.checked) pool.sort(() => Math.random() - 0.5);
 
     const quizCountInput = document.getElementById('quiz-count');
     let count = quizCountInput ? (parseInt(quizCountInput.value) || 60) : 60;
-    
-    // 선택한 문제 수가 해당 DAY의 단어 수보다 많을 경우 전체 단어 수로 맞춤
-    if (count > pool.length) {
-        count = pool.length;
-    }
+    if (count > pool.length) count = pool.length;
     
     quizWords = pool.slice(0, count);
     currentIdx = 0;
     score = 0;
     if (!isRetry) wrongWords = [];
 
-    showScreen('quiz-screen');
+    navigateTo('quiz-screen');
     showQuestion();
 }
 
@@ -107,25 +122,19 @@ function showQuestion() {
     if (currentIdx >= quizWords.length) return showResult();
 
     isSubmitted = false;
-    const submitBtn = document.getElementById('submit-btn');
-    const nextBtn = document.getElementById('next-btn');
-    if (submitBtn) submitBtn.classList.remove('hidden');
-    if (nextBtn) nextBtn.classList.add('hidden');
+    document.getElementById('submit-btn').classList.remove('hidden');
+    document.getElementById('next-btn').classList.add('hidden');
 
     const q = quizWords[currentIdx];
-    const hintCountInput = document.getElementById('hint-count');
+    const hintCountInput = document.getElementById('hint-count-input');
     const synonymCountInput = document.getElementById('synonym-count-input');
     
-    const hintLen = hintCountInput ? (parseInt(hintCountInput.value) || 1) : 1;
+    const hintOpt = hintCountInput ? hintCountInput.value : "1";
     const reqSynCount = synonymCountInput ? (parseInt(synonymCountInput.value) || 2) : 2;
 
-    const progressEl = document.getElementById('quiz-progress');
-    const wordEl = document.getElementById('quiz-word');
-    const posEl = document.getElementById('quiz-pos');
-
-    if (progressEl) progressEl.innerText = `문제: ${currentIdx + 1} / ${quizWords.length}`;
-    if (wordEl) wordEl.innerText = q.word;
-    if (posEl) posEl.innerText = q.pos;
+    document.getElementById('quiz-progress').innerText = `${currentIdx + 1} / ${quizWords.length}`;
+    document.getElementById('quiz-word').innerText = q.word;
+    document.getElementById('quiz-pos').innerText = q.pos;
 
     currentTargetSynonyms = q.synonyms.slice(0, reqSynCount);
 
@@ -133,15 +142,24 @@ function showQuestion() {
     if (container) {
         container.innerHTML = '';
         currentTargetSynonyms.forEach((syn, index) => {
+            // 힌트 글자 수 계산 로직 (절반 옵션 적용: 홀수면 -1 처리)
+            let hintLen = 1;
+            if (hintOpt === 'half') {
+                hintLen = Math.floor(syn.length / 2);
+                if (syn.length % 2 !== 0) hintLen = Math.floor((syn.length - 1) / 2);
+                if (hintLen < 1) hintLen = 1; // 최소 1글자는 보장
+            } else {
+                hintLen = parseInt(hintOpt) || 1;
+            }
+
             const hint = syn.slice(0, hintLen) + '_'.repeat(Math.max(0, syn.length - hintLen));
-            const hintFormatted = hint.split('').join(' ');
 
             const row = document.createElement('div');
             row.className = 'synonym-row';
             row.innerHTML = `
-                <label>동의어 ${index + 1} 힌트: ${hintFormatted}</label>
+                <div class="hint-text">${hint.split('').join(' ')}</div>
                 <div class="input-container">
-                    <input type="text" class="quiz-answer-input" data-index="${index}" placeholder="철자 입력" onkeydown="handleKeyDown(event)">
+                    <input type="text" class="quiz-answer-input" data-index="${index}" placeholder="정답 입력" onkeydown="handleKeyDown(event)">
                     <span class="feedback" id="feedback-${index}"></span>
                 </div>
             `;
@@ -155,11 +173,8 @@ function showQuestion() {
 
 function handleKeyDown(event) {
     if (event.key === 'Enter') {
-        if (!isSubmitted) {
-            submitAnswer();
-        } else {
-            nextQuestion();
-        }
+        if (!isSubmitted) submitAnswer();
+        else nextQuestion();
     }
 }
 
@@ -180,38 +195,27 @@ function submitAnswer() {
         if (feedbackEl) {
             if (userAns === correctAns && correctAns !== '') {
                 feedbackEl.className = 'feedback correct';
-                feedbackEl.innerText = '⭕ 정답';
+                feedbackEl.innerText = '⭕';
             } else {
                 allCorrect = false;
                 feedbackEl.className = 'feedback wrong';
-                feedbackEl.innerText = `❌ 오답 (정답: ${currentTargetSynonyms[idx] || ''})`;
+                feedbackEl.innerText = `❌ (${currentTargetSynonyms[idx]})`;
             }
         }
     });
 
     const q = quizWords[currentIdx];
-    if (allCorrect) {
-        score++;
-    } else {
-        if (q && !wrongWords.some(w => w.word === q.word)) {
-            wrongWords.push(q);
-        }
+    if (allCorrect) score++;
+    else {
+        if (q && !wrongWords.some(w => w.word === q.word)) wrongWords.push(q);
     }
 
-    try {
-        localStorage.setItem('wrongWords', JSON.stringify(wrongWords));
-    } catch (e) {
-        console.error(e);
-    }
+    try { localStorage.setItem('wrongWords', JSON.stringify(wrongWords)); } catch (e) {}
     
     isSubmitted = true;
-    const submitBtn = document.getElementById('submit-btn');
+    document.getElementById('submit-btn').classList.add('hidden');
     const nextBtn = document.getElementById('next-btn');
-    if (submitBtn) submitBtn.classList.add('hidden');
-    if (nextBtn) {
-        nextBtn.classList.remove('hidden');
-        nextBtn.focus();
-    }
+    if (nextBtn) { nextBtn.classList.remove('hidden'); nextBtn.focus(); }
 }
 
 function nextQuestion() {
@@ -220,33 +224,28 @@ function nextQuestion() {
 }
 
 function exitQuiz() {
-    if (confirm('테스트를 중단하시겠습니까? 현재까지 푼 문항만 기록에 반영됩니다.')) {
-        showResult(true); 
-    }
+    if (confirm('테스트를 중단하시겠습니까? 푼 문항만 기록에 저장됩니다.')) showResult(true);
 }
 
 function saveQuizRecord(totalCount, correctCount) {
     try {
-        const history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+        const historyData = JSON.parse(localStorage.getItem('quizHistory') || '[]');
         const now = new Date();
         const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
         
-        history.unshift({
+        historyData.unshift({
             date: dateStr,
             type: currentTestType,
             days: currentTestDays,
             total: totalCount,
             correct: correctCount
         });
-        
-        localStorage.setItem('quizHistory', JSON.stringify(history));
-    } catch (e) {
-        console.error(e);
-    }
+        localStorage.setItem('quizHistory', JSON.stringify(historyData));
+    } catch (e) {}
 }
 
 function showResult(isInterrupted = false) {
-    showScreen('result-screen');
+    showScreen('result-screen', false);
     const totalAttempted = isInterrupted ? (isSubmitted ? currentIdx + 1 : currentIdx) : (quizWords ? quizWords.length : 0);
     
     const scoreEl = document.getElementById('result-score');
@@ -255,22 +254,14 @@ function showResult(isInterrupted = false) {
             ? `테스트가 중단되었습니다.\n푼 문제: ${totalAttempted}문제 중 ${score}문제 맞춤`
             : `테스트 완료!\n총 ${totalAttempted}문제 중 ${score}문제 맞추셨습니다.`;
     }
-        
-    if (totalAttempted > 0) {
-        saveQuizRecord(totalAttempted, score);
-    }
+    if (totalAttempted > 0) saveQuizRecord(totalAttempted, score);
     checkWrongHistory();
 }
 
 function viewWordList() {
-    showScreen('wordlist-screen');
     const content = document.getElementById('wordlist-content');
     if (!content) return;
-    
-    if (allWords.length === 0) {
-        content.innerHTML = '<p>불러온 단어가 없습니다. data.csv 파일을 확인해주세요.</p>';
-        return;
-    }
+    if (allWords.length === 0) { content.innerHTML = '<p>불러온 단어가 없습니다.</p>'; return; }
 
     const grouped = {};
     allWords.forEach(w => {
@@ -285,35 +276,25 @@ function viewWordList() {
         grouped[day].forEach(w => {
             html += `
                 <div class="word-item">
-                    <strong>${w.word}</strong> (${w.pos})<br>
-                    <span style="color: var(--secondary)">${w.synonyms.join(', ')}</span>
+                    <strong>${w.word}</strong><span class="pos-tag">${w.pos}</span>
+                    <span class="syn-list">${w.synonyms.join(', ')}</span>
                 </div>
             `;
         });
         html += `</div>`;
     });
-
     content.innerHTML = html;
 }
 
 function viewHistory() {
-    showScreen('history-screen');
     const content = document.getElementById('history-content');
     if (!content) return;
+    let historyData = [];
+    try { historyData = JSON.parse(localStorage.getItem('quizHistory') || '[]'); } catch (e) {}
 
-    let history = [];
-    try {
-        history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
-    } catch (e) {
-        console.error(e);
-    }
+    if (historyData.length === 0) { content.innerHTML = '<p>저장된 테스트 기록이 없습니다.</p>'; return; }
 
-    if (history.length === 0) {
-        content.innerHTML = '<p>저장된 테스트 기록이 없습니다.</p>';
-        return;
-    }
-
-    content.innerHTML = history.map(h => `
+    content.innerHTML = historyData.map(h => `
         <div class="history-item">
             <strong>일시:</strong> ${h.date || ''}<br>
             <strong>종류:</strong> ${h.type || '동의어 철자'} (DAY ${h.days || ''})<br>
@@ -323,25 +304,13 @@ function viewHistory() {
 }
 
 function exportHistory() {
-    let history = [];
-    try {
-        history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
-    } catch (e) {
-        console.error(e);
-    }
-
-    if (history.length === 0) {
-        alert('내보낼 기록이 없습니다.');
-        return;
-    }
+    let historyData = [];
+    try { historyData = JSON.parse(localStorage.getItem('quizHistory') || '[]'); } catch (e) {}
+    if (historyData.length === 0) { alert('내보낼 기록이 없습니다.'); return; }
 
     let textContent = "영어 단어 테스트 기록\n====================\n\n";
-    history.forEach((h, idx) => {
-        textContent += `[기록 ${idx + 1}]\n`;
-        textContent += `일시: ${h.date || ''}\n`;
-        textContent += `종류: ${h.type || '동의어 철자'} (DAY: ${h.days || ''})\n`;
-        textContent += `결과: ${h.total || 0}문제 중 ${h.correct || 0}문제 맞춤 (${h.total ? Math.round((h.correct/h.total)*100) : 0}%)\n`;
-        textContent += `--------------------\n`;
+    historyData.forEach((h, idx) => {
+        textContent += `[기록 ${idx + 1}]\n일시: ${h.date || ''}\n종류: ${h.type || ''} (DAY: ${h.days || ''})\n결과: ${h.total || 0}문제 중 ${h.correct || 0}문제 맞춤 (${h.total ? Math.round((h.correct/h.total)*100) : 0}%)\n--------------------\n`;
     });
 
     const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
@@ -357,28 +326,13 @@ function exportHistory() {
 
 function clearHistory() {
     if (confirm('모든 테스트 기록을 삭제하시겠습니까?')) {
-        try {
-            localStorage.removeItem('quizHistory');
-        } catch (e) {
-            console.error(e);
-        }
+        try { localStorage.removeItem('quizHistory'); } catch (e) {}
         viewHistory();
     }
 }
 
 function showSetupView() {
-    showScreen('setup-screen');
-    checkWrongHistory();
-}
-
-function showScreen(id) {
-    const screens = ['setup-screen', 'quiz-screen', 'result-screen', 'wordlist-screen', 'history-screen'];
-    screens.forEach(s => {
-        const el = document.getElementById(s);
-        if (el) el.classList.add('hidden');
-    });
-    const target = document.getElementById(id);
-    if (target) target.classList.remove('hidden');
+    navigateTo('setup-screen');
 }
 
 function toggleDarkMode() {
