@@ -1,0 +1,1081 @@
+DAY,단어,품사,동의어1,동의어2,동의어3,동의어4
+1,exploit,v.,utilize,use,make use of,take advantage of
+1,account for,phr.,explain,justify,give a reason for,
+1,account for,phr.,make up,comprise,constitute,
+1,account for,phr.,cause,,,
+1,particular,adj.,specific,special,,
+1,prominent,adj.,noticeable,conspicuous,outstanding,remarkable
+1,prominent,adj.,important,leading,notable,
+1,replenish,v.,refill,restore,renew,
+1,indigenous,adj.,native,aboriginal,,
+1,pinpoint,v.,locate exactly,clearly identify,,
+1,pinpoint,adj.,precise,exact,accurate,
+1,annihilate,v.,destroy,completely remove,exterminate,
+1,conversely,adv.,on the other hand,contrarily,,
+1,investigate,v.,examin,inquire into,look into,
+1,assure,v.,convince,persuade,satisfy,guarantee
+1,entire,adj.,whole,total,complete,
+1,compensate for,phr.,make up for,atone for,make amends for,
+1,compensate for,phr.,balance,offset,,
+1,postulate,v.,hypothesize,suppose,claim,propose
+1,magnify,v.,enlarge,increase,amplify,intensify
+1,afford,v.,give,offer,provide,grant
+1,conclusive,adj.,definitive,final,enough to settle the issue,clear
+1,unsophisticated,adj.,simple,uncomplicated,not complex,
+1,justified,adj.,right,legitimate,just,reasonable
+1,deliberate,adj.,intentional,designed,planned,
+1,deliberate,adj.,careful,cautious,thoughtful,
+1,depend on,phr.,rely on,count on,,
+1,substantiate,v.,confirm,prove,authenticate,verify
+1,successively,adv.,one after another,sequentially,,
+1,pervasive,adj.,widespread,prevalent,,
+1,strenuous,adj.,intense,arduous,laborious,
+1,sleek,adj.,smooth,silky,,
+1,invoke,v.,call upon,pray to,conjure,
+1,impressive,adj.,striking,remarkable,,
+1,conjunction,n.,combination,union,,
+1,astoundingly,adv.,incredibly,surprisingly,shockingly,astonishingly
+1,aftermath,n.,result,outcome,consequence,aftereffect
+1,promptly,adv.,quickly,instantly,straightaway,
+1,subdue,v.,defeat,conquer,vanquish,
+1,extant,adj.,surviving,in existence,existing,living
+1,sedentary,adj.,stationary,settled,,
+1,eliminate,v.,get rid of,remove,discard,
+1,perfect,adj.,refine,improve,develop,
+1,genuine,adj.,TRUE,real,authentic,
+1,dominant,adj.,prevailing,prominent,supreme,chief
+1,unrivaled,adj.,unequaled,unparalleled,matchless,peerless
+1,paradox,n.,contradiction,absurdity,,
+1,neglect,v.,ignore,disregard,,
+1,neglect,n.,fail,forget,,
+1,recall,v.,remember,recollect,,
+1,ascend,v.,rise,climb,mount,go up
+1,solid,adj.,substantial,fixed,sturdy,robust
+1,contour,n.,outline,,,
+1,inhabit,v.,live in,occupy,dwell in,
+1,irrevocable,adj.,permanently,irreversibly,irretrievably,
+1,superficially,adv.,apparently,not deeply,externally,
+1,stunted,adj.,underdeveloped,hindered,hampered,
+1,malleable,adj.,flexible,,,
+1,mean,v.,signify,express,indicate,
+1,mean,adj.,average,,,
+1,exclude,v.,keep out,leave out,,
+1,mature,v.,get older,grow up,age,
+1,pillar,n.,column,post,,
+1,encroachment,n.,invasion,intrusion,,
+1,no wonder,phr.,unsurprisingly,unsurprising,,
+2,virtually,adv.,in effect,essentially,almost,nearly
+2,unprecedented,adj.,unlike anything in the past,unique,novel,new
+2,grow accustomed to,phr.,become used to,become familiar with,,
+2,intrigue,v.,interest,fascinate,attract,
+2,implausible,adj.,unlikely,unbelievable,improbable,
+2,decline,n.,weakening,decay,,
+2,decline,v.,decrease,lessen,fall,refuse
+2,contemporary,adj.,modern,present-day,current,coexisting
+2,allocate,v.,distribute,allot,designate,earmark
+2,drastically,adv.,severely,strikingly,extremely,
+2,conspicuous,adj.,(very) noticeable,clearly visible,prominent,obvious
+2,prolific,adj.,fertile,fruitful,productive,abundant
+2,fluctuation,n.,change,variation,variance,
+2,encourage,v.,promote,prompt,motivate,cheer up
+2,abrupt,adj.,sudden,sharp,unexpected,
+2,evaluate,v.,judge,assess,gauge,appraise
+2,comprehensive,adj.,thorough,complete,exhaustive,
+2,engrave,v.,carve,incise,etch,
+2,slight,adj.,minor,small,trivial,mild
+2,monotonous,adj.,unvaried,boring,tedious,dull
+2,regard,v.,consider,think of,see,
+2,regard,n.,attention,notice,,
+2,optimize,v.,make the best use of,,,
+2,supplant,v.,replace,substitute,displace,supersede
+2,colossal,adj.,enormous,monstrous,gigantic,
+2,diffuse,v.,spread,distribute,scatter,
+2,mechanics,n.,procedure,,,
+2,susceptible to,phr.,likely to get,vulnerable to,prone to,
+2,emanate,v.,emerge,spring,originate,
+2,conventionally,adv.,customarily,traditionally,,
+2,expansive,adj.,large,broad,wide,extensive
+2,sporadically,adv.,occasionally,at intervals,infrequently,
+2,comparative,adj.,relative,,,
+2,stamp out,phr.,eliminate,eradicate,extirpate,
+2,stagnation,n.,low growth,downturn,,
+2,innate,adj.,inborn,natural,native,
+2,obsolete,adj.,out of date,outdated,unused,out of use
+2,specify,v.,state,define,stipulate,
+2,endure,v.,tolerate,survive,suffer,persevere
+2,conceivable,adj.,imaginable,thinkable,possible,
+2,sufficiently,adv.,adequately,amply,satisfactorily,
+2,entail,v.,involve,cause,require,demand
+2,depict,v.,picture,portray,represent,
+2,integration,n.,union,unification,,
+2,stockpile,v.,store up,save,reserve,
+2,capture,v.,seize,catch,trap,grab
+2,landscape,n.,scenery,scene,view,
+2,elaborately,adv.,with great detail,,,
+2,autonomous,adj.,independent,self-determining,,
+2,boom,v.,flourish,thrive,prosper,rapidly expand
+2,supremacy,n.,dominance,predominance,ascendancy,
+2,ravage,v.,destroy,demolish,devastate,ruin
+2,authority,n.,expert,master,specialist,
+2,plug,v.,fill up,stuff,pack,
+2,discrepancy,n.,inconsistency,disparity,dissimilarity,
+2,elucidate,v.,clarify,explain,make clear,
+3,simultaneous,adj.,concurrent,happening at the same time,synchronous,
+3,vast,adj.,extensive,immense,great,huge
+3,reluctant,adj.,unwilling,disinclined,loath,
+3,conjecture,n.,speculation,guess,supposition,
+3,embed,v.,fix,insert,implant,root
+3,vow,n.,pledge,promise,oath,
+3,counter,v.,oppose,act against,refute,
+3,apparent,adj.,clear,evident,obvious,seeming
+3,bombard,v.,strike,assail,attack,
+3,reveal,v.,make known,show,unveil,uncover
+3,sturdy,adj.,well-built,strong,robust,stalwart
+3,traditionally,adv.,typically,,,
+3,correspondingly,adv.,similarly,likewise,,
+3,trigger,v.,cause,generate,initiate,start
+3,vigorous,adj.,strong and healthy,strong,energetic,forceful
+3,spontaneous,adj.,voluntary,unprompted,automatic,unplanned
+3,miniature,adj.,small,tiny,diminutive,
+3,commission,v.,order,hire,,
+3,remarkable,adj.,extraordinary,incredible,notable,significant
+3,effort,n.,attempt,endeavor,exertion,
+3,manifestation,n.,indication,sign,subject,evidence
+3,prior,adj.,previous,former,earlier,
+3,cast about,phr.,seek,search,hunt,
+3,rigorous,adj.,strict,harsh,,
+3,compulsory,adj.,obligatory,forced,required,necessary
+3,subsidiary,adj.,less important,auxiliary,subordinate,
+3,status,n.,standing,prestige,importance,
+3,emphasize,v.,stress,highlight,underline,
+3,largely,adv.,generally,mostly,mainly,
+3,experimental,adj.,trial,tentative,,
+3,drain,v.,withdraw liquid gradually,remove water,,
+3,denote,v.,indicate,signify,represent,
+3,repudiate,v.,reject,disclaim,,
+3,contradictory,adj.,inconsistent,paradoxical,conflicting,
+3,propagate,v.,multiply,reproduce,spread,disseminate
+3,ensure,v.,guarantee,assure,warrant,
+3,pore,n.,hole,,,
+3,pore,v.,stare,gaze,ponder,contemplate
+3,alternate,v.,take turns,rotate,interchange,
+3,devastating,adj.,destructive,ruinous,,
+3,mingle with,phr.,associate with,mix with,consort with,
+3,continued,adj.,ongoing,constant,incessant,ceaseless
+3,attempt,v.,try,seek,endeavor,
+3,subterfuge,n.,trick,deception,,
+3,convert,v.,change,transform,,
+3,contention,n.,debate,argument,disagreement,
+3,migrate,v.,move around,travel,,
+3,succession,n.,sequence,series,,
+3,tentativeness,n.,hesitation,indecision,,
+3,fragmentary,adj.,incomplete,fractional,partial,
+3,legendary,adj.,famous,mythical,,
+3,setback,n.,defeat,reverse,,
+3,fine-tune,v.,adjust slightly,,,
+3,enthusiastic,adj.,eager,ardent,zealous,
+3,loose,adj.,not strict,relaxed,slack,
+3,portrait,n.,picture,,,
+3,terminology,n.,vocabulary,jargon,language,
+4,readily,adv.,easily,effortlessly,quickly,willingly
+4,advocate,v.,promote,speak in favor of,argue in support of,
+4,advocate,n.,proponent,supporter,upholder,
+4,utterly,adv.,completely,total,,
+4,abound,v.,overflow,teem,be plentiful,be numerous
+4,formidable,adj.,impressive,difficult to handle,,
+4,enormous,adj.,huge,very large,great,immense
+4,disband,v.,dismiss,disperse,break up,
+4,alleged,adj.,supposed,assumed,,
+4,renowned,adj.,famous,celebrated,prominent,eminent
+4,versatile,adj.,adaptable,flexible,,
+4,prohibitive,adj.,unaffordable,extreme,exorbitant,proscriptive
+4,option,n.,choice,selection,,
+4,inherent,adj.,innate,built-in,essential,congenital
+4,justly,adv.,rightfully,justifiably,lawfully,
+4,provoke,v.,incite,bring about,give rise to,
+4,impermeable,adj.,impenetrable,impervious,,
+4,momentous,adj.,significant,major,meaningful,substantial
+4,forestall,v.,prevent,hinder,avert,
+4,therefore,adv.,consequently,as a result,thus,hence
+4,persuade,v.,convince,induce,,
+4,proximity,n.,closeness,nearness,,
+4,dependable,adj.,reliable,trustworthy,,
+4,ensuing,adj.,subsequent,following,succeeding,
+4,appreciably,adv.,noticeably,significantly,considerably,
+4,obligate,v.,force,coerce,compel,constrain
+4,wholesale,adj.,extensive,mass,completely,
+4,dweller,n.,inhabitant,resident,occupant,
+4,tacit,adj.,implicit,implied,unspoken,
+4,resolve,v.,settle,find a solution for,solve,decide
+4,merit,n.,value,worth,virtue,
+4,notion,n.,concept,general idea,opinion,view
+4,synthesize,v.,integrate,combine,coalesce,
+4,spectrum,n.,range,scope,extent,
+4,stream,n.,flow,current,,
+4,rupture,v.,burst,break apart,split,tear
+4,rupture,n.,breach,discord,,
+4,presuppose,v.,assume,suppose,presume,
+4,well-to-do,adj.,wealthy,affluent,rich,
+4,appeal,v.,plead,request,ask,beg
+4,accurately,adv.,correctly,precisely,exactly,
+4,fastidious,adj.,demanding,choosy,,
+4,contraction,n.,reduction,diminution,,
+4,stimulus,n.,impetus,motivation,incentive,incitement
+4,track,v.,follow,chase,monitor,
+4,tame,v.,domesticate,train,,
+4,install,v.,put in place,set up,position,induct
+4,chronicle,n.,record,history,,
+4,novel,adj.,new,innovative,unusual,
+4,isolated,adj.,remote,solitary,secluded,
+4,exposed,adj.,visible,revealed,uncovered,
+4,intermingled,adj.,mixed,combined,blended,
+4,succulent,adj.,juicy,pulpy,,
+4,homogeneous,adj.,unvarying,akin,,
+4,era,n.,period,epoch,age,
+4,threat',n.,intention to harm,menace,,
+4,foul,v.,pollute,contaminate,,
+4,prey,n.,victim,take advantage of,exploit,
+4,practically,adv.,nearly,,,
+5,compelling,adj.,convincing,persuasive,cogent,
+5,ultimately,adv.,eventually,finally,in the end,lastly
+5,bulk,n.,mass,large quantity,great quantity,majority
+5,incompatible,adj.,in conflict,discrepant,contradictory,
+5,substantially,adv.,significantly,considerably,largely,mainly
+5,seek,v.,look for,search for,pursue,attempt
+5,unanticipated,adj.,not expected,unforeseen,,
+5,merge,v.,combine,blend,fuse,
+5,encounter,v.,meet (with),experience,confront,face
+5,residue,n.,remains,remnant,remainder,
+5,circumstance,n.,condition,situation,,
+5,astonishing,adj.,incredible,amazing,startling,astounding
+5,intermittently,adv.,occasionally,periodically,from time to time,
+5,application,n.,use,utilization,employment,
+5,predominant,adj.,principal,main,primary,leading
+5,remote,adj.,distant,secluded,removed,faint
+5,inordinate,adj.,excessive,exorbitant,undue,
+5,launch,v.,start,begin,initiate,commence
+5,trend,n.,tendency,inclination,direction,
+5,embodiment,n.,concrete example,epitome,,
+5,colonize,v.,inhabit,populate,conquer,
+5,affect,v.,influence,impact,act on,pretend
+5,speculation,n.,supposition,conjecture,surmise,
+5,compound,v.,add to,intensify,worsen,
+5,fascinating,adj.,extremely attractive,captivating,enthralling,
+5,constellation,n.,collection,combination,group,
+5,unconsolidated,adj.,loose,incoherent,,
+5,outstanding,adj.,excellent,remarkable,prominent,unpaid
+5,outcome,n.,result,consequence,conclusion,
+5,document,n.,record,report,paper,verify
+5,intrinsically,adv.,fundamentally,essentially,,
+5,disputatious,adj.,contentious,argumentative,quarrelsome,
+5,diverse,adj.,varied,various,manifold,dissimilar
+5,eerie,adj.,odd,strange,,
+5,tenuous,adj.,weak,insubstantial,,
+5,eradicate,v.,(completely) remove,root up,extirpate,eliminate
+5,prone to,phr.,susceptible to,likely to get,,
+5,lodge,v.,embed,implant,,
+5,gather momentum,phr.,make progress,gain impetus,,
+5,viable,adj.,able to survive,,,
+5,impediment,n.,obstacle,obsolescence,barrier,
+5,arid,adj.,dry,barren,sterile,waterless
+5,credible,adj.,believable,reliable,plausible,
+5,vacate,v.,abandon,evacuate,void,
+5,cushion,v.,protect,buffer,,
+5,peculiar,adj.,unique,distinct,particular,strange
+5,attributable to,phr.,caused by,ascribable to,,
+5,enact,v.,make into law,establish,pass,adopt
+5,stratified,adj.,layered,,,
+5,with regard to,phr.,in terms of,with respect to,concerning,
+5,turbulent,adj.,violent,agitated,tumultuous,
+5,appraisal,n.,evaluation,assessment,estimation,
+5,erroneous,adj.,wrong,incorrect,mistaken,FALSE
+5,proponent,n.,supporter,advocate,adherent,partisan
+5,absolute,adj.,unqualified,complete,utter,
+5,gratify,v.,satisfy,please,,
+6,disperse,v.,scatter,dissipate,spread,disseminate
+6,adjacent,adj.,nearby,neighboring,adjoining,
+6,sequence,n.,progression,series,string,succession
+6,detect,v.,discover,find,identify,recognize
+6,flexible,adj.,pliable,bendable,adaptable,adjustable
+6,surpass,v.,exceed,outrun,be higher than,excel
+6,invariable,adj.,constant,consistent,unchanging,
+6,dramatic,adj.,striking,significant,impressive,
+6,master,v.,learn thoroughly,learn,acquire,control
+6,assimilate,v.,absorb,take in,digest,accommodate
+6,overwhelming,adj.,powerful,enormous,compelling,tremendous
+6,curious,adj.,inquisitive,questioning,inquiring,strange
+6,alteration,n.,change,modification,,
+6,consequence,n.,result,effect,ramification,outcome
+6,deceive,v.,mislead,delude,cheat,
+6,ample,adj.,sizable,large,spacious,vast
+6,resilient,adj.,quick to recover,easy to recover,,
+6,detach,v.,separate,disconnect,disengage,
+6,account,n.,description,report,narrative,
+6,equilibrium,n.,balance,symmetry,,
+6,surmise,v.,infer,guess,speculate,suspect
+6,unsuitable,adj.,inappropriate,unfit,improper,
+6,imaginative,adj.,creative,inventive,original,
+6,imposing,adj.,impressive,striking,,
+6,vitality,n.,energy,liveliness,vigor,
+6,vehicle,n.,means,medium,instrument,
+6,hitherto,adv.,previously,so far,until now,
+6,plague,v.,cause a problem for,bother,annoy,
+6,domain,n.,area,field,,
+6,indifferent,adj.,uninterested,unconcerned,careless,
+6,champion,v.,support,promote,advocate,endorse
+6,deteriorate,v.,get worse,degenerate,,
+6,assault,v.,attack,aggress,assail,
+6,appropriate,adj.,suitable,proper,applicable,
+6,adept,adj.,skillful,proficient,deft,adroit
+6,indeed,adv.,in truth,in fact,,
+6,pursuit,n.,interest,pastime,hobby,search
+6,incite,v.,stimulate,provoke,inflame,spur
+6,guarantee,v.,ensure,secure,warrant,
+6,prosperity,n.,economic well-being,wealth,fortune,
+6,primarily,adv.,mostly,mainly,chiefly,originally
+6,erupt,v.,explode,burst,blow up,
+6,trace,n.,evidence,vestige,imprint,mark
+6,prestigious,adj.,highly regarded,esteemed,respected,
+6,shape,v.,affect,form,influence,
+6,inflict,v.,cause,administer,exact,
+6,portion,n.,part,segment,fragment,
+6,coincidence,n.,chance happening,,,
+6,propel,v.,push,force,drive,impel
+6,thoroughly,adv.,completely,entirely,,
+6,contemplate,v.,consider,ponder,,
+6,unethical,adj.,improper,immoral,,
+6,replicate,v.,reproduce,copy,duplicate,
+6,hasty,adj.,hurried,rushed,,
+6,representative,adj.,indicative,typical,exemplary,
+6,range,n.,scope,spectrum,extent,
+7,considerable,adj.,substantial,a large amount of,large,meaningful
+7,dominate,v.,control,govern,rule,be widespread in
+7,ratio,n.,proportion,rate,percentage,
+7,duplicate,v.,copy,reproduce,imitate,repeat
+7,barely,adv.,hardly,scarcely,almost not,just
+7,strew,v.,scatter,sprinkle,disperse,
+7,legitimately,adv.,properly,lawfully,legally,
+7,encapsulate,v.,summarize,sum up,condense,
+7,relatively,adv.,comparatively,by comparison,,
+7,hazard,n.,risk,danger,peril,jeopardy
+7,paramount,adj.,supreme,prime,chief,
+7,unwieldy,adj.,difficult to manage,awkward,,
+7,subsequent,adj.,succeeding,following,later,following in time
+7,striking,adj.,noticeable,remarkable,attention-getting,
+7,extended,adj.,long-lasting,prolonged,,
+7,ephemeral,adj.,short-lived,living for a short time,temporary,
+7,rigid,adj.,strict,exact,severe,rigorous
+7,chief,adj.,major,main,primary,principal
+7,severity,n.,seriousness,,,
+7,typical of,phr.,characteristic of,representative of,,
+7,enable,v.,allow,permit,facilitate,
+7,empirical,adj.,based on observation,experimental,,
+7,controversy,n.,dispute,debate,disagreement,contention
+7,accomplish,v.,achieve,execute,work out,put through
+7,set,adj.,fixed,settled,,
+7,set,v.,situate,place,put,
+7,lag,n.,delay,,,
+7,exude,v.,give off,release,emit,
+7,interplay,n.,interaction,reciprocity,,
+7,precede,v.,come before,antecede,forerun,
+7,manipulation,n.,deliberate alteration,,,
+7,dry,adj.,arid,rainless,parched,
+7,assist with,phr.,help with,aid,support,
+7,acute,adj.,severe,intense,extreme,
+7,article,n.,object,item,thing,
+7,scrutiny,n.,close observation,examination,inspection,
+7,recompense,n.,repayment,compensation,,
+7,reflect,v.,show,indicate,display,demonstrate
+7,reflect,v.,meditate,think,consider,ponder
+7,immeasurably,adv.,greatly,extremely,,
+7,rudiments,n.,basics,elements,fundamentals,
+7,mortality,n.,death,,,
+7,awkward,adj.,clumsy,unskillful,,
+7,constrain,v.,oblige,bind,force,pressure
+7,constrain,v.,inhibit,restrain,restrict,
+7,turmoil,n.,unrest,addiction,stir,
+7,property,n.,characteristic,character,quality,estate
+7,fuel,v.,give energy to,encourage,,
+7,majestic,adj.,magnificent,grand,august,
+7,preeminent,adj.,outstanding,distinguished,foremost,
+7,crude,adj.,rough,primitive,raw,unrefined
+7,variety,n.,diversity,multiplicity,type,species
+7,typically,adv.,usually,normally,ordinarily,
+7,supplementary,adj.,additional,,,
+7,reduce,v.,decrease,diminish,cut,
+7,subject,n.,participant,,,
+7,subject,v.,expose,,,
+7,flee,v.,run away from,escape,abscond,
+8,furthermore,adv.,in addition,moreover,,
+8,proliferate,v.,multiply,become numerous,increase in number,
+8,assess,v.,evaluate,estimate,judge,appraise
+8,spur,n.,stimulus,incitement,incentive,
+8,spur,v.,stimulate,prompt,,
+8,eclectic,adj.,diverse,various,manifold,
+8,crucial,adj.,decisive,important,essential,vital
+8,intricate,adj.,complex,complicated,elaborately,tangled
+8,palatial,adj.,magnificent,grand,majestic,splendid
+8,potent,adj.,powerful,strong,influential,
+8,extract,v.,draw,derive,remove,
+8,course through,phr.,run through,,,
+8,criterion,n.,standard,measure,norm,
+8,enjoy,v.,experience,,,
+8,inadvertently,adv.,unintentionally,accidentally,unwittingly,
+8,peril,n.,danger,jeopardy,hazard,
+8,arduous,adj.,difficult,strenuous,laborious,
+8,feat,n.,achievement,accomplishment,exploit,
+8,friction,n.,conflict,clash,discord,strife
+8,materialize,v.,appear,emerge,loom,
+8,regulate,v.,adjust,control,,
+8,demise,n.,end,fall,collapse,downfall
+8,frankly,adv.,honestly,openly,truthfully,candidly
+8,immensely,adv.,extremely,excessively,enormously,incredibly
+8,deem,v.,consider,regard,believe,
+8,consumption,n.,use,utilization,,
+8,suspend,v.,hang,dangle,swing,
+8,prevent,v.,preclude,avoid,impede,avert
+8,authentic,adj.,genuine,TRUE,real,
+8,redundant,adj.,superfluous,unnecessary,wordy,repetitious
+8,profuse,adj.,abundant,plentiful,copious,lavish
+8,ornament,v.,decorate,adorn,embellish,
+8,demolish,v.,destroy,wreck,,
+8,voracious,adj.,insatiable,greedy,gluttonous,
+8,as well as,phr.,in addition to,not to mention,,
+8,extreme,adj.,intense,severe,excessive,
+8,reform,n.,betterment,,,
+8,reform,v.,amend,improve,ameliorate,
+8,determinant,n.,cause,factor,,
+8,inclination,n.,tendency,trend,preference,taste
+8,inflation,n.,expansion,swelling,enlargement,
+8,routine,adj.,ordinary,normal,conventional,
+8,accessible,adj.,reachable,obtainable,,
+8,constituent,adj.,component,elemental,,
+8,insolent,adj.,impertinent,impudent,rude,
+8,to be sure,phr.,certainly,definitely,surely,
+8,broadly,adv.,generally,mostly,,
+8,echo,v.,reflect,resound,resonate,imitate
+8,shoddy,adj.,inferior,poor,,
+8,gear,v.,adjust,adapt,change,
+8,absorb,v.,take in,imbibe,soak up,
+8,whereby,conj.,through which,by which,,
+8,assemble,v.,gather together,bring together,collect,
+8,liberate,v.,free,release,loosen,
+8,rational,adj.,logical,sensible,reasonable,
+8,resistance,n.,opposition,objection,refusal to accept,
+8,indefinite period,phr.,a period whose end has not been determined,,,
+8,ardent,adj.,enthusiastic,passionate,fervent,
+8,extinct,adj.,having died out,defunct,,
+8,be accompanied by,phr.,occur together with,,,
+8,overestimated,adj.,bigger than actual value,,,
+9,initiate,v.,start,begin,originate,commence
+9,tremendous,adj.,great,large,gigantic,huge
+9,breakthrough,n.,advance,progress,,
+9,cope with,phr.,deal with,manage,handle,
+9,inducement,n.,incentive,incitement,lure,
+9,irreversible,adj.,irreparable,irrevocable,irremediable,
+9,comprise,v.,include,encompass,consist of,be made up of
+9,culmination,n.,high point,apex,pinnacle,
+9,allegiance,n.,loyalty,fidelity,commitment,dedication
+9,notable,adj.,remarkable,outstanding,important,
+9,idiosyncrasy,n.,pecerliarity,eccentricity,oddity,
+9,minute,adj.,tiny,very small,diminutive,
+9,markedly,adv.,significantly,noticeably,considerably,substantially
+9,phenomenon,n.,occurrence,incident,,
+9,disseminate,v.,spread,disperse,distribute,
+9,current,adj.,present,existing,,
+9,detrimental,adj.,harmom,injurious,damaging,pernicious
+9,presume,v.,believe,accept as true,,
+9,anarchy,n.,disorder,chaos,disorganization,
+9,snake,v.,wind,meander,curve,twist
+9,sophisticated,adj.,complex,highly developed,,
+9,derive,v.,originate,trace,obtain,gain
+9,sole,adj.,only,single,solitary,
+9,embellish,v.,decorate,make attractive,adorn,beautify
+9,antagonize,v.,anger,aggravate,counteract,
+9,yearn,v.,long,desire,crave,pine
+9,permit,v.,allow,let,approve,
+9,scarcity,n.,lack,shortage,insufficiency,deficiency
+9,renounce,v.,give up,reject,relinquish,
+9,keep in check,phr.,limit,control,restrict,restrain
+9,subsistence,n.,survival,existence,living,
+9,annually,adv.,each year,yearly,every year,
+9,emerge,v.,appear,loom,spring up,come out
+9,customary,adj.,habitual,traditional,typical,accustomed
+9,widely,adv.,extensively,broadly,,
+9,assign,v.,specify,designate,appoint,
+9,equivocal,adj.,ambiguous,vague,obscure,uncertain
+9,release,v.,free,liberate,loose,emit
+9,essentially,adv.,basically,fundamentally,primarily,
+9,oversee,v.,supervise,control,superintend,
+9,rapidly,adv.,quickly,fast,,
+9,acknowledge,v.,recognize,admit,accept,
+9,rough,adj.,uneven,rugged,bumpy,coarse
+9,preclude,v.,prevent,stop,hinder,rule out
+9,portable,adj.,able to be carried,mobile,movable,
+9,presumable,adj.,probable,likely,possible,
+9,calculatedly,adv.,deliberately,intentionally,knowingly,
+9,deviation,n.,departure,divergence,aberration,
+9,hairline,adj.,slight,thin,,
+9,formulate,v.,develop,devise,forge,state
+9,astute,adj.,insightful,shrewd,clever,sharp
+9,reliable,adj.,dependable,trustworthy,credible,
+9,take precedence over,phr.,be more important than,come before,,
+9,allusion,n.,reference,mention,implication,suggestion
+9,locomotion,n.,movement,motion,,
+9,principally,adv.,mainly,,,
+9,rebellion,n.,uprising,revolt,,
+9,revive,v.,recover,,,
+10,modify,v.,change,alter,adjust,adapt
+10,initially,adv.,at first,originally,primarily,
+10,critical,adj.,important,crucial,essential,dangerous
+10,luminous,adj.,brilliant,bright,shining,glowing
+10,facilitate,v.,ease,make easy,help,assist
+10,refinement,n.,small improvement,advancement,enhancement,
+10,attribute,n.,characteristic,trait,quality,property
+10,attribute,v.,ascribe,credit,impute,refer
+10,belch,v.,suddenly emit,discharge,erupt,vent
+10,underrate,v.,undervalue,underestimate,belittle,
+10,immense,adj.,large,enormous,huge,tremendous
+10,virtue,n.,goodness,merit,desirable quality,strength
+10,bustling,adj.,busy,lively,,
+10,distinct,adj.,different,separate,discrete,definite
+10,thriving,adj.,prosperous,successful,flourishing,
+10,obvious,adj.,evident,clear,apparent,conspicuous
+10,exceptional,adj.,extraordinary,abnormal,unusual,
+10,cumbersome,adj.,difficult to handle,burdensome,awkward,
+10,boon,n.,great benefit,advantage,,
+10,optimum,adj.,best,most favorable,supreme,
+10,uniformly,adv.,evenly,regularly,consistently,
+10,unleash,v.,release,unloose,,
+10,acquire,v.,obtain,gain,procure,earn
+10,enigma,n.,mystery,puzzle,riddle,
+10,steadfast,adj.,unwavering,firm,enduring,resolute
+10,dainty,adj.,delicate,exquisite,refined,
+10,anomaly,n.,irregularity,abnormality,exception,
+10,splendid,adj.,marvelous,magnificent,,
+10,rapport,n.,bond,relationship,link,tie
+10,question,v.,take a critical look at,dispute,,
+10,scatter,v.,disperse,dissipate,distribute,spread out
+10,escalate,v.,intensify,increase,mount,rise
+10,temporary,adj.,short-lived,makeshift,for a limited time,transitory
+10,attest,v.,confirm,support,prove,
+10,fortify,v.,strengthen,reinforce,,
+10,remove,v.,eliminate,extract,withdraw,
+10,end,n.,purpose,goal,aim,
+10,plentiful,adj.,abundant,bountiful,rich,
+10,make it,phr.,arrive,,,
+10,devastate,v.,destroy,demolish,ravage,ruin
+10,eminently,adv.,exceptionally,highly,extremely,
+10,subtraction,n.,decrease,deduction,reduction,
+10,as a rule of thumb,phr.,in general,,,
+10,blur,v.,make less distinct,obscure,cloud,
+10,relay,v.,transfer,communicate,transmit,impart
+10,expandable,adj.,able to be enlarged,extendable,,
+10,scrupulous,adj.,careful,fastidious,meticulous,honest
+10,approximately,adv.,about,roughly,nearly,
+10,paradoxical,adj.,seemingly contradictory,ironic,,
+10,source,n.,origin,beginning,derivation,
+10,adhere,v.,stick,cleave,cling,
+10,available,adj.,accessible,obtainable,,
+10,get rid of,phr.,eliminate,remove,dispose of,
+10,repel,v.,drive away,beat off,,
+10,maximize,v.,increase to the greatest possible degree,,,
+10,outermost,adj.,farthest away,farthest,most remote,
+10,bind,v.,tie,fasten,,
+10,visible,adj.,perceptible,,,
+11,plausible,adj.,possible,believable,likely,probable
+11,transform,v.,convert,change,alter,
+11,counterpart,n.,complement,equivalent,,
+11,nevertheless,adv.,in spite of that,however,still,yet
+11,pronounced,adj.,notable,striking,marked,significant
+11,celebrated,adj.,famous,renowned,well-known,
+11,exceedingly,adv.,highly,extremely,excessively,hugely
+11,chancy,adj.,risky,perilous,dangerous,
+11,vertical,adj.,upright,up-and-down,erect,
+11,persist,v.,continue,last,endure,remain
+11,magnitude,n.,extent,size,degree,measure
+11,discern,v.,identify,detect,distinguish,
+11,generate,v.,produce,create,,
+11,eccentric,adj.,unusual,bizarre,peculiar,odd
+11,alternative,adj.,substitutive,different,,
+11,alternative,n.,substitute,choice,option,
+11,strategy,n.,plan,method,scheme,
+11,refine,v.,improve,perfect,,
+11,precious,adj.,valuable,dear,priceless,
+11,subtle,adj.,hard to recognize,hardly perceived,slight,
+11,conducive to,phr.,favorable to,helpful for,beneficial to,
+11,preoccupied with,phr.,concentrated on,absorbed in,immersed in,
+11,swift,adj.,quick,speedy,fleet,
+11,menace,v.,threaten,initiate,frighten,
+11,akin to,phr.,similar to,like,,
+11,expend,v.,use,use up,spend,consume
+11,belittle,v.,disregard,underestimate,,
+11,commend,v.,admire,praise,compliment,
+11,sue,v.,take a strong legal action against,charge,,
+11,innovation,n.,new development,novelty,new idea,
+11,fragmentation,n.,destruction,disintegration,disruption,
+11,mainly,adv.,principally,generally,primarily,chiefly
+11,sufficient,adj.,enough,adequate,ample,
+11,abnormally,adv.,unusually,oddly,exceptionally,atypically
+11,barrier,n.,bar,obstacle,obstruction,
+11,gigantic,adj.,huge,immense,colossal,
+11,reproduce,v.,copy,duplicate,imitate,breed
+11,allow,v.,enable,permit,let,
+11,penetrate,v.,pierce,go through,enter,
+11,device,n.,mechanism,apparatus,appliance,
+11,divergent,adj.,varying,different,dissimilar,
+11,flaw,n.,defect,fault,blemish,shortcoming
+11,buffer,v.,protect,cushion,,
+11,refute,v.,disprove,rebut,prove false,
+11,domestic,adj.,household,home,family,
+11,on the spur of the moment,phr.,without planning,on impulse,,
+11,temperate,adj.,moderate,mild,clement,
+11,consistent with,phr.,in agreement with,congruent with,,
+11,splendor,n.,magnificence,grandeur,majesty,
+11,prosper,v.,succeed,flourish,thrive,
+11,brew,v.,develop,loom,be on the way,
+11,persevere,v.,continue,carry on,persist,
+11,bias,n.,prejudice,,,
+11,administer,v.,manage,supervise,conduct,give
+11,groundless,adj.,unfounded,baseless,,
+11,arouse,v.,stimulate,provoke,incite,
+11,occupy,v.,engross,engage,absorb,
+11,virtual,adj.,almost complete,,,
+11,unexplored,adj.,uncovered,,,
+11,tuned to,phr.,in agreement with,,,
+12,duration,n.,span,length,term,
+12,massive,adj.,huge,enormous,very large,tremendous
+12,feasible,adj.,practicable,viable,possible,achievable
+12,vibrant,adj.,active,vivacious,energetic,vivid
+12,accumulation,n.,buildup,collection,stock,
+12,link,n.,connection,bond,tie,
+12,link,v.,connect,relate,associate,
+12,informally,adv.,commonly,casually,,
+12,sovereign,n.,master,monarch,ruler,
+12,key,adj.,important,central,essential,
+12,key,n.,tone,,,
+12,eventually,adv.,in the end,finally,ultimately,later
+12,persistent,adj.,continuous,enduring,long-lasting,constant
+12,corroborate,v.,confirm,verify,substantiate,
+12,inaugurate,v.,introduce,initiate,begin,commence
+12,further,adj.,additional,extra,supplementary,
+12,concentrate on,phr.,focus on,pay attention to,,
+12,moreover,adv.,additionally,in addition,as well,besides
+12,execute,v.,perform,carry out,fulfill,implement
+12,execute,v.,produce,,,
+12,urbane,adj.,cultivated,sophisticated,polished,refined
+12,boast,v.,show off,brag,swagger,
+12,boast,v.,proudly possess,,,
+12,envision,v.,imagine,conceive,visualize,
+12,intermediate,adj.,in-between,between extremes,median,
+12,frightful,adj.,alarming,fearsome,,
+12,irrevocable,adj.,permanent,irreversible,unchangeable,
+12,disintegration,n.,breaking apart,collapse,,
+12,burgeoning,adj.,rapidly expanding,growing,escalating,
+12,terrestrial,adj.,earthly,worldly,,
+12,adorn,v.,decorate,beautify,ornament,
+12,revolution,n.,fundamental change,innovation,,
+12,randomness,n.,lack of pattern,,,
+12,superficial,adj.,external,not deep,exterior,
+12,diversion,n.,distraction,,,
+12,originate from,phr.,come from,derive from,stem from,
+12,intimate,adj.,close,familiar,,
+12,blossom,v.,flourish,bloom,thrive,
+12,groundwork,n.,foundation,basis,footing,
+12,trivial,adj.,small,frivolous,unimportant,insignificant
+12,posterity,n.,future generations,next generations,,
+12,aggravate,v.,make worse,worsen,exacebate,
+12,obtainable,adj.,available,accessible,attainable,
+12,extent,n.,range,scope,stretch,
+12,ingenious,adj.,inventive,creative,innovative,clever
+12,burst,v.,break open,break out,,
+12,outlying,adj.,far from the center,remote,distant,
+12,revolve around,phr.,focus on,center on,,
+12,meticulously,adv.,carefully,precisely,,
+12,utilitarian,adj.,practical,pragmatic,functional,
+12,constitute,v.,make up,comprise,compose,
+12,reciprocal,adj.,mutual,,,
+12,tendency,n.,inclination,trend,proneness,
+12,artifact,n.,object,item,article,
+12,expedite,v.,accelerate,speed up,urge,rush
+12,scenario,n.,situation,sequence of events,,
+12,define,v.,identify,,,
+12,propulsion,n.,moving forward,thrust,impetus,
+12,resolute,adj.,firm,determined,steadfast,unwavering
+12,phase,n.,period,stage,step,
+12,fairly,adv.,reasonably,moderately,pretty,
+12,fairly,adv.,impartially,,,
+13,merely,adv.,simply,only,no more than,just
+13,decimate,v.,destroy,eliminate,wipe out,demolish
+13,incentive,n.,motivation,motive,encouragement,inducement
+13,retrieve,v.,bring back,get back,recover,obtain
+13,compress,v.,condense,compact,contract,crush
+13,designate,v.,indicate,identify,specify,define
+13,dissemination,n.,spread,distribution,diffusion,
+13,marked,adj.,noticeable,considerable,prominent,discernible
+13,hypothetical,adj.,supposed,imaginary,,
+13,flow,n.,stream,current,movement,motion
+13,precise,adj.,exact,accurate,definite,
+13,stipulate,v.,require,demand,call for,
+13,perspective,n.,point of view,viewpoint,orientation,
+13,enhance,v.,improve,enrich,intensify,
+13,fundamental,adj.,essential,basic,primary,elementary
+13,evident,adj.,clear,apparent,obvious,manifest
+13,shift,v.,move,transfer,change,switch
+13,unique among,phr.,different from other,,,
+13,full-fledged,adj.,well-developed,full-blown,,
+13,laborious,adj.,difficult,strenuous,,
+13,emit,v.,give off,exhale,release,discharge
+13,stunning,adj.,amazing,impressive,breathtaking,spectacular
+13,tantalizing,adj.,tempting,enticing,,
+13,tantalizing,adj.,teasing,,,
+13,abandoned,adj.,no longer occupied,deserted,vacant,
+13,transmit,v.,convey,communicate,send,
+13,candidly,adv.,honestly,frankly,plainly,
+13,compulsorily,adv.,by requirement,obligatorily,mandatorily,
+13,aid,v.,assist,support,help,back
+13,deliberation,n.,discussion,debate,conference,
+13,preposterous,adj.,unbelievable,absurd,nonsensical,
+13,sparse,adj.,scattered,thinly distributed,,
+13,sparse,adj.,scanty,meager,scarce,limited
+13,occasionally,adv.,once in a while,now and then,sometimes,
+13,inconceivable,adj.,unthinkable,unimaginable,,
+13,breeding,n.,reproduction,propagation,,
+13,overriding,adj.,dominant,chief,principal,
+13,favor,v.,prefer,lean toward,,
+13,sediment,n.,remains,deposition,,
+13,clever,adj.,ingenious,smart,brilliant,bright
+13,consistently,adv.,regularly,typically,unchangingly,
+13,rate,v.,judge,assess,evaluate,
+13,predominate,v.,outweigh,prevail,,
+13,predominate,adj.,most popular,,,
+13,realize,v.,be aware of,understand,catch on,
+13,realize,v.,achieve,accomplish,fulfill,
+13,circuitous,adj.,indirect,roundabout,,
+13,owing to,prep.,due to,because of,as a result of,
+13,model,n.,specimen,prototype,example,
+13,with respect to,phr.,with regard to,in terms of,in reference to,
+13,continuous,adj.,uninterrupted,ongoing,uncesing,consecutive
+13,collaborate,v.,cooperate,put effort together,work together,
+13,anonymous,adj.,unknown,unnamed,unidentified,innominate
+13,somewhat,adv.,to some degree,to some extent,rather,
+13,damaging,adj.,harmful,detrimental,noxious,
+13,dramatically,adv.,greatly,substantially,remarkably,
+13,heighten,v.,increase,intensify,,
+13,share,n.,portion,part,allotment,
+13,shortly,adv.,soon,presently,,
+13,besides,adv.,in addition,moreover,,
+13,besides,prep.,apart from,,,
+13,seep,v.,ooze,flow slowly,pass through slowly,
+13,habit,n.,usual behavior,custom,practice,
+14,lethal,adj.,deadly,dangerous,fatal,pernicious
+14,modest,adj.,small,not large,limited,simple
+14,component,n.,element,constituent,ingredient,part
+14,exploitation,n.,use,abuse,misuse,
+14,relic,n.,remains,remnant,vestige,
+14,profoundly,adv.,deeply,completely,strongly,
+14,deflect,v.,change the direction of,divert,,
+14,highlight,v.,emphasize,stress,underline,accent
+14,exert,v.,apply,exercise,employ,put forth
+14,potential,adj.,possible,prospective,latent,
+14,potential,n.,possibility,,,
+14,recurring,adj.,repeated,recurrent,,
+14,meager,adj.,scanty,scarce,very low,deficient
+14,prevail,v.,be dominant,dominate,be widespread,be prevalent
+14,prevail,v.,triumph,,,
+14,exclusively,adv.,solely,only,entirely,totally
+14,consensus,n.,agreement,consent,,
+14,now and then,phr.,occasionally,from time to time,at times,
+14,discrete,adj.,separate,distinct,individual,
+14,anchor,v.,hold in place,secure,fasten,
+14,improbable,adj.,unlikely,implausible,doubtful,
+14,pragmatic,adj.,practical,utilitarian,,
+14,undisputed,adj.,acknowledged,accepted,recognized,
+14,allocation,n.,distribution,assignment,allotment,
+14,inconclusive,adj.,not definitive,indecisive,,
+14,withstand,v.,endure,resist,sustain,
+14,cornerstone,n.,foundation,basic element,basis,underpinning
+14,marvelous,adj.,wonderful,astonishing,amazing,
+14,clue,n.,information,indication,evidence,trace
+14,unintentionally,adv.,inadvertently,accidentally,unconsciously,
+14,peak,n.,height,pinnacle,summit,maximum
+14,continual,adj.,constant,incessant,ceaseless,
+14,thorough,adj.,complete,exhaustive,intensive,
+14,accurate,adj.,precise,correct,exact,TRUE
+14,mobilize,v.,put into action,deploy,,
+14,given that,phr.,accepting that,considering that,,
+14,cargo,n.,shipment,load,freight,burden
+14,solitary,adj.,isolated,secluded,remote,alone
+14,slightly,adv.,a little,somewhat,a bit,
+14,deliberately,adv.,intentionally,consciously,on purpose,
+14,unthinkable,adj.,inconceivable,unimagined,,
+14,coinage,n.,creation,innovation,,
+14,obligation,n.,responsibility,duty,liability,
+14,reconcile,v.,bring together,reunite,,
+14,severe,adj.,harsh,extreme,rigorous,strict
+14,foremost,adj.,most respected,most important,preeminent,supreme
+14,surge,v.,increase,rise,wax,
+14,hasten,v.,accelerate,rush,hurry,speed up
+14,tentatively,adv.,without certainty,uncertainly,hesitantly,
+14,scorn,v.,ridicule,disdain,sneer,despise
+14,throughout,prep.,during every part of,during the whole of,,
+14,pitfall,n.,difficulty,trouble,,
+14,coupled with,phr.,together with,combined with,,
+14,huge,adj.,enormous,large,massive,mammoth
+14,span,n.,duration,period,length,
+14,span,v.,extend across,cover,cross,
+14,hollow,adj.,empty,vacant,void,unfilled
+14,appreciable,adj.,significant,noticeable,considerable,
+14,shield,v.,protect,defend,safeguard,
+14,spearhead,v.,lead,lead the way,head,
+14,methodically,adv.,systematically,,,
+14,manage to,phr.,be able to,,,
+15,intact,adj.,undamaged,unbroken,whole,complete
+15,albeit,conj.,although,though,even though,
+15,complex,adj.,intricate,complicated,elaborate,involved
+15,complex,n.,group of buildings,system,,
+15,conventional,adj.,traditional,customary,standard,usual
+15,reasonable,adj.,sensible,rational,logical,
+15,reasonable,adj.,sufficient,,,
+15,attainment,n.,achievement,accomplishment,fulfillment,
+15,progressively,adv.,increasingly,,,
+15,drawback,n.,disadvantage,problem,defect,shortcoming
+15,suppress,v.,hold back,restrain,,
+15,suppress,v.,stop by force,,,
+15,incidentally,adv.,by the way,,,
+15,tactic,n.,strategy,maneuver,,
+15,substantial,adj.,(fairly) large,considerable,significant,noticeable
+15,verify,v.,confirm,establish the truth of,validate,
+15,sustained,adj.,constant,continued,uninterrupted,prolonged
+15,radical,adj.,fundamental,basic,,
+15,radical,adj.,extreme,drastic,,
+15,prime,adj.,peak,high-quality,superior,main
+15,grasp,v.,understand,catch,comprehend,apprehend
+15,prominently,adv.,very noticeably,conspicuously,notably,
+15,precipitate,v.,bring about,cause,give rise to,trigger
+15,interlock,v.,link,connect,join,
+15,accordingly,adv.,consequently,for that reason,,
+15,relevant,adj.,applicable,pertinent,germane,
+15,remarkably,adv.,surprisingly,,,
+15,disputable,adj.,challengeable,debatable,arguable,
+15,ambitious,adj.,desiring success,aspiring,,
+15,congeal,v.,solidify,harden,stiffen,condense
+15,cautious,adj.,careful,wary,prudent,discreet
+15,realm,n.,area,field,sphere,domain
+15,dam,v.,block,obstruct,,
+15,flattery,n.,praise,,,
+15,amplify,v.,increase,magnify,enlarge,expand
+15,dimension,n.,size,magnitude,,
+15,deplete,v.,exhaust,empty,use up,reduce
+15,characteristic,adj.,distinctive,peculiar,special,
+15,characteristic,n.,quality,feature,trait,
+15,ice sheet,n.,glacier,,,
+15,spectator,n.,viewer,onlooker,,
+15,bountifully,adv.,abundantly,copiously,plentifully,exuberantly
+15,suffer paralysis,phr.,lose the ability to move,,,
+15,variation,n.,variance,fluctuation,difference,
+15,periphery,n.,edge,boundary,border,fringe
+15,apparently,adv.,seemingly,ostensibly,outwardly,
+15,far-reaching,adj.,extensive,widespread,broad,
+15,embody,v.,incarnate,represent,manifest,
+15,embody,v.,contain,incorporate,,
+15,evade,v.,escape,avoid,elude,dodge
+15,against,prep.,next to,beside,,
+15,due to,phr.,caused by,owing to,attributable to,
+15,classify,v.,categorize,arrange,assort,
+15,oblige,v.,force,require,compel,
+15,identical,adj.,same,indistinguishable,equal,
+15,intimately,adv.,closely,,,
+15,questionable,adj.,doubtful,suspicious,dubious,
+15,spot,v.,detect,see,find,
+15,immerse,v.,cover,plunge,dip,
+15,not in consensus with,phr.,not in agreement with,,,
+15,be tempted to,phr.,be inclined to,,,
+15,inception,n.,beginning,,,
+16,subsequently,adv.,later,afterward,,
+16,explicit,adj.,clear,specific,obvious,unambiguous
+16,prevailing,adj.,dominant,widespread,current,existing
+16,rudimentary,adj.,basic,elementary,fundamental,
+16,rudimentary,adj.,primitive,undeveloped,,
+16,allude to,phr.,suggest,refer to,imply,indicate
+16,assertive,adj.,forceful,dogmatic,,
+16,fuse,v.,melt,dissolve,,
+16,fuse,v.,combine,merge,,
+16,transitory,adj.,short-lived,brief,ephemeral,fleeting
+16,inviolable,adj.,without exception,allowing no exception,sacred,
+16,supersede,v.,replace,displace,supplant,substitute
+16,abundant,adj.,plentiful,bountiful,ample,numerous
+16,significant,adj.,considerable,substantial,serious,important
+16,elaboration,n.,development,improvement,,
+16,pristine,adj.,unspoiled,pure,untouched,
+16,steadily,adv.,consistently,continuously,constantly,at an unvarying rate
+16,hence,adv.,therefore,consequently,thus,
+16,fabricate,v.,make,produce,build,
+16,meet,v.,deal with,handle,,
+16,devour,v.,eat,consume,gulp,gobble
+16,amiss,adj.,wrong,erroneous,faulty,
+16,figure out,phr.,determine,calculate,work out,
+16,augment,v.,supplement,,,
+16,trespass,v.,invade,encroach,infringe,
+16,deduce,v.,conclude,infer,derive,
+16,quantify,v.,measure,quantify,,
+16,aggregation,n.,group,body,assemblage,
+16,lax,adj.,careless,neglectful,negligent,
+16,pace,n.,speed,rate,tempo,
+16,inspect,v.,examine,scan,check,
+16,keen,adj.,sharp,acute,,
+16,abandon,v.,desert,give up,forsake,relinquish
+16,prowess,n.,ability,competence,expertise,
+16,anyone can see,phr.,it is clear,it is apparent,,
+16,coarse,adj.,rough,crude,,
+16,impervious,adj.,impermeable,resistant,impenetrable,
+16,moderate,v.,lessen,diminish,,
+16,moderate,adj.,gentle,temperate,mild,
+16,stagnant,adj.,inactive,sluggish,,
+16,drive,v.,propel,force,push,impel
+16,drive,n.,ambition,,,
+16,drive,n.,campaign,effort,,
+16,anxiety,n.,worry,angst,uneasiness,
+16,allegedly,adv.,supposedly,reportedly,,
+16,utilize,v.,employ,use,make use of,
+16,differential,adj.,uneven,discriminatory,,
+16,maintain,v.,preserve,continue,sustain,keep
+16,maintain,v.,claim,assert,contend,
+16,jointly,adv.,together,in conjunction with,as one,
+16,catastrophic,adj.,disastrous,harmful,tragic,calamitous
+16,aridity,n.,dryness,waterlessness,,
+16,paradoxically,adv.,contradictorily,surprisingly,,
+16,archetypal,adj.,ideal,classic,exemplary,
+16,purposely,adv.,intentionally,deliberately,knowingly,
+16,collision,n.,crash,smash,,
+16,implant,v.,insert,embed,,
+16,standpoint,n.,perspective,point of view,,
+16,cue,n.,signal,sign,,
+16,trappings,n.,decoration,organment,adornment,
+16,spawn,v.,give rise to,create,produce,
+16,outbreak,n.,sudden increase,upsurge,,
+17,prolonged,adj.,lengthy,extended,protracted,
+17,relative,adj.,comparable,,,
+17,ultimate,adj.,eventual,final,supreme,
+17,ultimate,adj.,fundamental,basic,primary,
+17,brittle,adj.,easily broken,breakable,fragile,
+17,pioneer,n.,leader,founder,,
+17,pioneer,v.,first develop,(first) start,first use,introduce
+17,heritage,n.,inheritance,legacy,tradition,
+17,impetus,n.,motivation,testimulus,spur,impulse
+17,threshold,n.,limit,margin,,
+17,intensify,v.,reinforce,strengthen,enhance,
+17,orchestrate,v.,coordinate,organize,,
+17,hamper,v.,obstruct,impede,hinder,restrict
+17,inhospitable,adj.,unfavorable,unfriendly,,
+17,inhospitable,adj.,not suitable,uninhabitable,,
+17,roughly,adv.,approximately,nearly,about,
+17,prevalent,adj.,common,general,widespread,
+17,orientation,n.,perspective,inclination,disposition,
+17,orientation,n.,introduction,induction,,
+17,converge,v.,come together,meet,move closer,gather
+17,inflate,v.,swell,bloat,expand,enlarge
+17,terrain,n.,land,landscape,territory,area
+17,critically,adv.,fundamentally,decisively,crucially,
+17,in earnest,phr.,seriously,earnestly,solemnly,
+17,agile,adj.,nimble,quick,active,
+17,standstill,n.,complete stop,halt,,
+17,persuasively,adv.,convincingly,compellingly,,
+17,miraculous,adj.,amazing,astonishing,marvelous,unbelievable
+17,intangible,adj.,nonmaterial,impalpable,incorporeal,
+17,secure,v.,obtain,get,acquire,procure
+17,secure,adj.,safe,,,
+17,subsist,v.,survive,endure,exist,
+17,undoubtedly,adv.,certainly,definitely,without question,
+17,dispose of,phr.,get rid of,,,
+17,archive,n.,official document,record,,
+17,regenerate,v.,renew,revive,realize,
+17,mode,n.,method,form,fashion,style
+17,commemorate,v.,celebrate,memorialize,,
+17,imprecise,adj.,inexact,inaccurate,,
+17,state,v.,indicate,specify,express,
+17,anticipate,v.,expect,foresee,predict,forecast
+17,henceforth,adv.,from now on,hereafter,,
+17,transparent,adj.,clear,obvious,lucid,limpid
+17,prominence,n.,importance,greatness,,
+17,incorporate,v.,include,combine,integrate,
+17,meticulous,adj.,careful,thorough,precise,
+17,dismantle,v.,take apart,disassemble,break down,
+17,lavish,adj.,rich,deluxe,luxurious,
+17,dynamic,adj.,active,energetic,vigorous,robust
+17,dynamic,n.,energy,power,driving force,
+17,overlook,v.,miss,fail to notice,,
+17,dormant,adj.,inactive,torpid,,
+17,exempt,adj.,free,immune,not subject to,excused
+17,as a whole,phr.,generally,overall,all together,by and large
+17,rather,adv.,instead,,,
+17,rather,adv.,somewhat,slightly,,
+17,justify,v.,support,prove,give a rational basis of,
+17,chaotic,adj.,disorganized,disordered,anarchic,
+17,commence,v.,begin,start,originate,initiate
+17,improvised,adj.,unplanned,unprepared,unrehearsed,
+17,stem from,phr.,originate from,derive from,arise from,
+17,judiciously,adv.,wisely,sensibly,prudently,
+17,tolerate,v.,accept,allow,permit,
+18,initiative,n.,enterprise,ambition,drive,
+18,provided that,phr.,if,once,on the condition that,supposing
+18,phenomenal,adj.,extraordinary,remarkable,,
+18,likewise,adv.,similarly,in the same way,,
+18,likewise,adv.,also,as well,,
+18,tangible,adj.,material,physical,concrete,substantial
+18,absurd,adj.,ridiculous,preposterous,ludicrous,
+18,inclement,adj.,unfavorable,harsh,severe,
+18,overly,adv.,excessively,inordinately,unduly,
+18,consume,v.,expend,use up,completely use,exhaust
+18,consume,v.,destroy,devastate,demolish,
+18,consume,v.,eat,devour,,
+18,overall,adj.,general,total,comprehensive,
+18,promote,v.,encourage,advance,further,forward
+18,proliferation,n.,increase,growth,multiplication,
+18,copious,adj.,plentiful,abundant,ample,bountiful
+18,negligible,adj.,insignificant,slight,minor,trivial
+18,notably,adv.,particularly,especially,in particular,
+18,inhibit,v.,hinder,restrict,limit,restrain
+18,worshiper,n.,people participating in a religious service,,,
+18,pool,v.,combine,put together,,
+18,pool,n.,combination,group,,
+18,at the urging of,phr.,at the recommendation of,,,
+18,ornamental,adj.,decorative,beautifying,embellishing,
+18,regime,n.,government,administration,authorities,
+18,acclaim,v.,praise,compliment,applaud,
+18,comprehensible,adj.,understandable,apprehensible,knowable,
+18,disparity,n.,inequality,imbalance,disproportion,
+18,bold,adj.,daring,brave,courageous,
+18,noteworthy,adj.,important,notable,significant,
+18,spectacular,adj.,magnificent,splendid,impressive,
+18,extracted from,phr.,taken out of,drawn out of,,
+18,tantalize,v.,tempt,,,
+18,allied,adj.,related,linked,connected,
+18,authoritative,adj.,official,authorized,,
+18,moral,n.,lesson,message,teaching,
+18,compatible,adj.,consistent,congruous,consonant,
+18,buildup,n.,accumulation,,,
+18,stress,v.,emphasize,highlight,underline,
+18,stress,n.,emphasis,accent,,
+18,respective,adj.,particular,individual,,
+18,peculiarity,n.,feature,characteristic,quality,
+18,rely upon,phr.,depend upon,resort to,,
+18,rapid,adj.,fast,quick,speedy,swift
+18,saturate,v.,soak,drench,wet thoroughly,
+18,constitution,n.,form,structure,,
+18,efface,v.,wipe out,erase,expunge,
+18,manageable,adj.,controllable,affordable,easy to handle,
+18,approach,v.,come close,move toward,come toward,near
+18,approach,n.,method,way,,
+18,routinely,adv.,commonly,regularly,habitually,
+18,adapt,v.,adjust,acclimate,conform,
+18,implication,n.,consequence,result,,
+18,unambiguous,adj.,clear,distinct,definite,
+18,rigor,n.,harshness,strictness,rigidness,
+18,rigor,n.,hardship,adversity,,
+18,contentious,adj.,disputed,controversial,argumentative,
+18,competent,adj.,adept,skilled,capable,
+18,incredible,adj.,unbelievable,inconceivable,unimagined,
+18,string,n.,series,chain,,
+18,decompose,v.,decay,rot,,
+18,lateral,adj.,side,,,

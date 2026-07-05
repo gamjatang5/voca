@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영어 단어 테스트</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <button onclick="toggleDarkMode()">다크모드 토글</button>
+    </div>
+
+    <!-- 설정 화면 -->
+    <div id="setup-screen" class="card">
+        <h2>단어 테스트 설정</h2>
+        <div class="form-group">
+            <label>DAY 선택 (예: 1 또는 1,2,3):</label>
+            <input type="text" id="day-input" value="1">
+        </div>
+        <div class="form-group">
+            <label>문제 수:</label>
+            <input type="number" id="quiz-count" value="10">
+        </div>
+        <div class="form-group">
+            <label>힌트 글자 수:</label>
+            <input type="number" id="hint-count" value="2">
+        </div>
+        <div class="form-group">
+            <label>테스트할 동의어 개수:</label>
+            <select id="synonym-count-input">
+                <option value="1">1개</option>
+                <option value="2">2개</option>
+                <option value="3">3개</option>
+                <option value="4" selected>4개 모두</option>
+            </select>
+        </div>
+        <div class="form-group checkbox">
+            <label><input type="checkbox" id="shuffle-input" checked> 순서 섞기</label>
+        </div>
+        <button onclick="startTest(false)" class="btn-primary">테스트 시작</button>
+        <button onclick="startTest(true)" id="retry-btn" class="btn-secondary hidden">오답만 다시 풀기</button>
+        <button onclick="viewWordList()" class="btn-secondary">단어장 보기</button>
+    </div>
+
+    <!-- 테스트 화면 -->
+    <div id="quiz-screen" class="card hidden">
+        <h3 id="quiz-progress"></h3>
+        <div class="quiz-info">
+            <p>문제 단어: <strong id="quiz-word"></strong></p>
+            <p>품사: <span id="quiz-pos"></span></p>
+        </div>
+        
+        <div id="inputs-container">
+            <!-- 자바스크립트에서 동의어 개수만큼 입력창을 생성합니다 -->
+        </div>
+
+        <button onclick="submitAnswer()" class="btn-primary" style="margin-top: 15px;">제출</button>
+        <div id="quiz-result" class="result-message"></div>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="result-screen" class="card hidden">
+        <h2>테스트 완료</h2>
+        <p id="result-score"></p>
+        <button onclick="showSetupView()" class="btn-primary">처음으로</button>
+    </div>
+
+    <!-- 단어장 화면 -->
+    <div id="wordlist-screen" class="card hidden">
+        <h2>단어장</h2>
+        <button onclick="showSetupView()" class="btn-secondary" style="margin-bottom: 15px;">뒤로가기</button>
+        <div id="wordlist-content"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
