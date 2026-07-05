@@ -5,6 +5,8 @@
     --border: #cccccc;
     --primary: #007bff;
     --secondary: #6c757d;
+    --success: #28a745;
+    --danger: #dc3545;
 }
 
 [data-theme="dark"] {
@@ -14,6 +16,8 @@
     --border: #444444;
     --primary: #375a7f;
     --secondary: #4f5d73;
+    --success: #218838;
+    --danger: #bd2130;
 }
 
 body {
@@ -87,15 +91,10 @@ button {
     margin-bottom: 8px;
 }
 
-.btn-primary {
-    background-color: var(--primary);
-    color: white;
-}
-
-.btn-secondary {
-    background-color: var(--secondary);
-    color: white;
-}
+.btn-primary { background-color: var(--primary); color: white; }
+.btn-secondary { background-color: var(--secondary); color: white; }
+.btn-success { background-color: var(--success); color: white; }
+.btn-danger { background-color: var(--danger); color: white; }
 
 .quiz-info {
     font-size: 1.1rem;
@@ -104,7 +103,7 @@ button {
 }
 
 .synonym-row {
-    margin-bottom: 12px;
+    margin-bottom: 15px;
 }
 
 .synonym-row label {
@@ -114,17 +113,55 @@ button {
     font-family: monospace;
 }
 
-.result-message {
-    margin-top: 15px;
+.input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-container input {
+    flex: 1;
+}
+
+.feedback {
     font-weight: bold;
-    font-size: 1.1rem;
-    white-space: pre-line;
+    font-size: 0.95rem;
+    white-space: nowrap;
 }
 
 .correct { color: #28a745; }
 .wrong { color: #dc3545; }
 
+/* 단어장 레이아웃 관련 스타일 */
+.day-section {
+    margin-bottom: 25px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.day-header {
+    background-color: var(--secondary);
+    color: white;
+    padding: 10px 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0;
+}
+
 .word-item {
-    padding: 10px;
+    padding: 12px 15px;
+    background-color: var(--card);
+}
+
+.word-item:not(:last-child) {
     border-bottom: 1px solid var(--border);
+}
+
+/* 기록 항목 스타일 */
+.history-item {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+    line-height: 1.5;
 }

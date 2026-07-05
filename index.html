@@ -42,27 +42,29 @@
         <button onclick="startTest(false)" class="btn-primary">테스트 시작</button>
         <button onclick="startTest(true)" id="retry-btn" class="btn-secondary hidden">오답만 다시 풀기</button>
         <button onclick="viewWordList()" class="btn-secondary">단어장 보기</button>
+        <button onclick="viewHistory()" class="btn-secondary">테스트 기록 보기</button>
     </div>
 
     <!-- 테스트 화면 -->
     <div id="quiz-screen" class="card hidden">
-        <h3 id="quiz-progress"></h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 id="quiz-progress" style="margin: 0;"></h3>
+            <button onclick="exitQuiz()" class="btn-danger" style="width: auto; margin: 0; padding: 5px 10px; font-size: 0.85rem;">테스트 중단</button>
+        </div>
         <div class="quiz-info">
             <p>문제 단어: <strong id="quiz-word"></strong></p>
             <p>품사: <span id="quiz-pos"></span></p>
         </div>
         
-        <div id="inputs-container">
-            <!-- 자바스크립트에서 동의어 개수만큼 입력창을 생성합니다 -->
-        </div>
+        <div id="inputs-container"></div>
 
-        <button onclick="submitAnswer()" class="btn-primary" style="margin-top: 15px;">제출</button>
-        <div id="quiz-result" class="result-message"></div>
+        <button id="submit-btn" onclick="submitAnswer()" class="btn-primary" style="margin-top: 15px;">제출</button>
+        <button id="next-btn" onclick="nextQuestion()" class="btn-success hidden" style="margin-top: 15px;">다음 문제</button>
     </div>
 
     <!-- 결과 화면 -->
     <div id="result-screen" class="card hidden">
-        <h2>테스트 완료</h2>
+        <h2>테스트 결과</h2>
         <p id="result-score"></p>
         <button onclick="showSetupView()" class="btn-primary">처음으로</button>
     </div>
@@ -72,6 +74,14 @@
         <h2>단어장</h2>
         <button onclick="showSetupView()" class="btn-secondary" style="margin-bottom: 15px;">뒤로가기</button>
         <div id="wordlist-content"></div>
+    </div>
+
+    <!-- 기록 화면 -->
+    <div id="history-screen" class="card hidden">
+        <h2>테스트 기록</h2>
+        <button onclick="clearHistory()" class="btn-danger" style="margin-bottom: 10px; padding: 8px;">전체 기록 삭제</button>
+        <button onclick="showSetupView()" class="btn-secondary" style="margin-bottom: 15px;">뒤로가기</button>
+        <div id="history-content"></div>
     </div>
 
     <script src="script.js"></script>

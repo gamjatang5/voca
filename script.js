@@ -4,8 +4,8 @@ let wrongWords = [];
 let currentIdx = 0;
 let score = 0;
 let currentTargetSynonyms = [];
+let isSubmitted = false;
 
-// 1. CSV 데이터 파싱 함수 (따옴표 및 공백 안정적으로 제거)
 function parseCSV(text) {
     const lines = text.split(/\r?\n/);
     const result = [];
@@ -14,7 +14,6 @@ function parseCSV(text) {
         const line = lines[i].trim();
         if (!line) continue;
         
-        // 콤마 분리 (단, 데이터 내 따옴표 처리 완화)
         const parts = line.split(',').map(item => item.replace(/^["']|["']$/g, '').trim());
         
         if (parts.length >= 3) {
@@ -30,7 +29,6 @@ function parseCSV(text) {
     return result;
 }
 
-// 파일 자동 로드
 fetch('data.csv')
     .then(res => {
         if (!res.ok) throw new Error('data.csv 파일을 찾을 수 없습니다.');
@@ -61,7 +59,6 @@ function startTest(isRetry) {
     let pool = isRetry ? [...wrongWords] : [...allWords];
     
     if (!isRetry) {
-        // 입력받은 DAY 파싱 (공백 제거)
         const targetDays = document.getElementById('day-input').value.split(',').map(d => d.trim());
         pool = pool.filter(w => targetDays.includes(w.day));
     }
@@ -88,6 +85,10 @@ function startTest(isRetry) {
 function showQuestion() {
     if (currentIdx >= quizWords.length) return showResult();
 
+    isSubmitted = false;
+    document.getElementById('submit-btn').classList.remove('hidden');
+    document.getElementById('next-btn').classList.add('hidden');
+
     const q = quizWords[currentIdx];
     const hintLen = parseInt(document.getElementById('hint-count').value) || 2;
     const reqSynCount = parseInt(document.getElementById('synonym-count-input').value) || 1;
@@ -96,13 +97,11 @@ function showQuestion() {
     document.getElementById('quiz-word').innerText = q.word;
     document.getElementById('quiz-pos').innerText = q.pos;
 
-    // 현재 문제에서 출제할 동의어 수 제한 개수만큼 가져오기
     currentTargetSynonyms = q.synonyms.slice(0, reqSynCount);
 
     const container = document.getElementById('inputs-container');
     container.innerHTML = '';
 
-    // 설정된 동의어 개수만큼 각각 힌트와 입력 칸 생성
     currentTargetSynonyms.forEach((syn, index) => {
         const hint = syn.slice(0, hintLen) + '_'.repeat(Math.max(0, syn.length - hintLen));
         const hintFormatted = hint.split('').join(' ');
@@ -111,67 +110,111 @@ function showQuestion() {
         row.className = 'synonym-row';
         row.innerHTML = `
             <label>동의어 ${index + 1} 힌트: ${hintFormatted}</label>
-            <input type="text" class="quiz-answer-input" data-index="${index}" placeholder="철자 입력" onkeydown="if(event.key==='Enter') submitAnswer()">
+            <div class="input-container">
+                <input type="text" class="quiz-answer-input" data-index="${index}" placeholder="철자 입력" onkeydown="handleKeyDown(event)">
+                <span class="feedback" id="feedback-${index}"></span>
+            </div>
         `;
         container.appendChild(row);
     });
 
-    // 첫 번째 입력창에 포커스
     const firstInput = container.querySelector('input');
     if (firstInput) firstInput.focus();
+}
 
-    document.getElementById('quiz-result').innerText = '';
+function handleKeyDown(event) {
+    if (event.key === 'Enter') {
+        if (!isSubmitted) {
+            submitAnswer();
+        } else {
+            nextQuestion();
+        }
+    }
 }
 
 function submitAnswer() {
-    // 이미 채점되어 대기 중일 때는 중복 실행 방지
-    if (document.getElementById('quiz-result').innerText !== '') return;
+    if (isSubmitted) return;
 
     const inputElements = document.querySelectorAll('.quiz-answer-input');
     let allCorrect = true;
-    let wrongDetails = [];
 
     inputElements.forEach(inputEl => {
         const idx = parseInt(inputEl.getAttribute('data-index'));
         const userAns = inputEl.value.trim().toLowerCase();
         const correctAns = currentTargetSynonyms[idx].toLowerCase();
+        const feedbackEl = document.getElementById(`feedback-${idx}`);
 
-        if (userAns !== correctAns) {
+        inputEl.disabled = true;
+
+        if (userAns === correctAns) {
+            feedbackEl.className = 'feedback correct';
+            feedbackEl.innerText = '⭕ 정답';
+        } else {
             allCorrect = false;
+            feedbackEl.className = 'feedback wrong';
+            feedbackEl.innerText = `❌ 오답 (정답: ${currentTargetSynonyms[idx]})`;
         }
     });
 
-    const resultEl = document.getElementById('quiz-result');
     const q = quizWords[currentIdx];
-
     if (allCorrect) {
         score++;
-        resultEl.className = 'result-message correct';
-        resultEl.innerText = '⭕ 정답입니다!';
     } else {
-        // 하나라도 틀리면 오답 처리 및 현재 단어를 오답 노트에 추가
         if (!wrongWords.some(w => w.word === q.word)) {
             wrongWords.push(q);
         }
-        resultEl.className = 'result-message wrong';
-        resultEl.innerText = `❌ 오답!\n요청 정답: ${currentTargetSynonyms.join(', ')}`;
     }
 
     localStorage.setItem('wrongWords', JSON.stringify(wrongWords));
-
-    // 1.8초 후 다음 문제로 이동
-    setTimeout(() => {
-        currentIdx++;
-        showQuestion();
-    }, 1800);
+    
+    isSubmitted = true;
+    document.getElementById('submit-btn').classList.add('hidden');
+    document.getElementById('next-btn').classList.remove('hidden');
+    document.getElementById('next-btn').focus();
 }
 
-function showResult() {
+function nextQuestion() {
+    currentIdx++;
+    showQuestion();
+}
+
+// 중도 종료 기능 (푼 문항만 계산하여 기록 저장)
+function exitQuiz() {
+    if (confirm('테스트를 중단하시겠습니까? 현재까지 푼 문항만 기록에 반영됩니다.')) {
+        showResult(true); 
+    }
+}
+
+function saveQuizRecord(totalCount, correctCount) {
+    const history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    
+    history.unshift({
+        date: dateStr,
+        total: totalCount,
+        correct: correctCount
+    });
+    
+    localStorage.setItem('quizHistory', JSON.stringify(history));
+}
+
+function showResult(isInterrupted = false) {
     showScreen('result-screen');
-    document.getElementById('result-score').innerText = `${quizWords.length}문제 중 ${score}문제 맞추셨습니다.`;
+    // 중단 시 현재 번호 전까지를 전체 개수로 판단 (단, 제출 완료 안 한 문제는 문항 수에서 제외)
+    const totalAttempted = isInterrupted ? (isSubmitted ? currentIdx + 1 : currentIdx) : quizWords.length;
+    
+    document.getElementById('result-score').innerText = isInterrupted 
+        ? `테스트가 중단되었습니다.\n푼 문제: ${totalAttempted}문제 중 ${score}문제 맞춤`
+        : `테스트 완료!\n총 ${totalAttempted}문제 중 ${score}문제 맞추셨습니다.`;
+        
+    if (totalAttempted > 0) {
+        saveQuizRecord(totalAttempted, score);
+    }
     checkWrongHistory();
 }
 
+// DAY별 그룹화하여 단어장 출력하는 기능
 function viewWordList() {
     showScreen('wordlist-screen');
     const content = document.getElementById('wordlist-content');
@@ -181,12 +224,55 @@ function viewWordList() {
         return;
     }
 
-    content.innerHTML = allWords.map(w => `
-        <div class="word-item">
-            <strong>DAY ${w.day} - ${w.word}</strong> (${w.pos})<br>
-            <span style="color: var(--secondary)">동의어: ${w.synonyms.join(', ')}</span>
+    // DAY 기준으로 데이터 묶기
+    const grouped = {};
+    allWords.forEach(w => {
+        if (!grouped[w.day]) grouped[w.day] = [];
+        grouped[w.day].push(w);
+    });
+
+    let html = '';
+    // DAY 정렬 정렬 후 화면 출력 생성
+    Object.keys(grouped).sort((a, b) => Number(a) - Number(b)).forEach(day => {
+        html += `<div class="day-section">`;
+        html += `<h4 class="day-header">DAY ${day}</h4>`;
+        grouped[day].forEach(w => {
+            html += `
+                <div class="word-item">
+                    <strong>${w.word}</strong> (${w.pos})<br>
+                    <span style="color: var(--secondary)">동의어: ${w.synonyms.join(', ')}</span>
+                </div>
+            `;
+        });
+        html += `</div>`;
+    });
+
+    content.innerHTML = html;
+}
+
+function viewHistory() {
+    showScreen('history-screen');
+    const content = document.getElementById('history-content');
+    const history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+
+    if (history.length === 0) {
+        content.innerHTML = '<p>저장된 테스트 기록이 없습니다.</p>';
+        return;
+    }
+
+    content.innerHTML = history.map(h => `
+        <div class="history-item">
+            <strong>일시:</strong> ${h.date}<br>
+            <strong>결과:</strong> ${h.total}문제 중 ${h.correct}문제 정답 (${Math.round((h.correct/h.total)*100)}%)
         </div>
     `).join('');
+}
+
+function clearHistory() {
+    if (confirm('모든 테스트 기록을 삭제하시겠습니까?')) {
+        localStorage.removeItem('quizHistory');
+        viewHistory();
+    }
 }
 
 function showSetupView() {
@@ -195,7 +281,7 @@ function showSetupView() {
 }
 
 function showScreen(id) {
-    ['setup-screen', 'quiz-screen', 'result-screen', 'wordlist-screen'].forEach(s => {
+    ['setup-screen', 'quiz-screen', 'result-screen', 'wordlist-screen', 'history-screen'].forEach(s => {
         document.getElementById(s).classList.add('hidden');
     });
     document.getElementById(id).classList.remove('hidden');
