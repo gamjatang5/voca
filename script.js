@@ -9,9 +9,8 @@ let currentTestMode = "synonym";
 let currentTestTypeLabel = "동의어 철자";
 let currentTestDays = "";
 
-// CSV 파싱 및 한글 깨짐 방지 디코딩 처리
+// CSV 파싱 및 인코딩 처리
 function parseCSV(text) {
-    // 엑셀에서 생성된 UTF-8 CSV 파일의 BOM(Byte Order Mark) 제거
     if (text.startsWith('\uFEFF')) {
         text = text.substring(1);
     }
@@ -55,20 +54,24 @@ function parseCSV(text) {
     return result;
 }
 
-// 파일 읽어올 때 텍스트 디코더 적용으로 한글 깨짐 현상 차단
 fetch('data.csv')
     .then(res => { 
         if (!res.ok) throw new Error(); 
         return res.arrayBuffer(); 
     })
     .then(buffer => {
-        // UTF-8 디코더 명시로 한글 인코딩 깨짐을 원천 방지
-        const decoder = new TextDecoder('utf-8');
-        const text = decoder.decode(buffer);
+        const decoder = new TextDecoder('euc-kr');
+        let text = decoder.decode(buffer);
+        
+        if (text.includes('')) {
+            const utf8Decoder = new TextDecoder('utf-8');
+            text = utf8Decoder.decode(buffer);
+        }
+
         allWords = parseCSV(text); 
         checkWrongHistory(); 
     })
-    .catch(() => alert('data.csv 파일을 불러오지 못했습니다. 파일 인코딩(UTF-8)을 확인해 주세요.'));
+    .catch(() => alert('data.csv 파일을 불러오지 못했습니다.'));
 
 function checkWrongHistory() {
     try {
@@ -84,16 +87,23 @@ function checkWrongHistory() {
     } catch (e) {}
 }
 
-function toggleSetupOptions() {
-    const mode = document.getElementById('test-type-input').value;
-    const synGroup = document.getElementById('synonym-count-group');
-    if (mode === 'synonym') synGroup.classList.remove('hidden');
-    else synGroup.classList.add('hidden');
-}
-
+// 브라우저 및 아이폰 뒤로가기(스와이프) 제어 연동 고도화
 window.addEventListener('popstate', (event) => {
-    if (event.state && event.state.screen) showScreen(event.state.screen, false);
-    else showScreen('setup-screen', false);
+    const currentActiveScreen = document.querySelector('.view-screen:not(.hidden)');
+    
+    // 테스트 도중 뒤로가기 시도를 감지하면 중단 절차 작동
+    if (currentActiveScreen && currentActiveScreen.id === 'quiz-screen') {
+        // 히스토리를 강제로 복구시켜 화면 이탈을 방지한 뒤 중단 얼럿 띄움
+        history.pushState({ screen: 'quiz-screen' }, '', '');
+        exitQuiz();
+        return;
+    }
+
+    if (event.state && event.state.screen) {
+        showScreen(event.state.screen, false);
+    } else {
+        showScreen('setup-screen', false);
+    }
 });
 
 function navigateTo(screenId) {
@@ -101,7 +111,14 @@ function navigateTo(screenId) {
     showScreen(screenId, true);
 }
 
-function handleHeaderBack() { window.history.back(); }
+function handleHeaderBack() { 
+    const currentActiveScreen = document.querySelector('.view-screen:not(.hidden)');
+    if (currentActiveScreen && currentActiveScreen.id === 'quiz-screen') {
+        exitQuiz();
+    } else {
+        window.history.back(); 
+    }
+}
 
 function showScreen(id, updateHistory = true) {
     const screens = ['setup-screen', 'quiz-screen', 'result-screen', 'wordlist-screen', 'history-screen'];
@@ -120,16 +137,102 @@ function showScreen(id, updateHistory = true) {
     if (id === 'history-screen') viewHistory();
 }
 
-function calculateHint(word, option) {
-    let hintLen = 1;
-    if (option === 'half') {
-        hintLen = Math.floor(word.length / 2);
-        if (word.length % 2 !== 0) hintLen = Math.floor((word.length - 1) / 2);
-        if (hintLen < 1) hintLen = 1;
-    } else {
-        hintLen = parseInt(option) || 1;
+// 가로 스크롤 문제를 완벽 차단하기 위해 글자수 단위 개별 단독 인풋 생성 알고리즘으로 전면 전개
+function getHintAndInputSetup(fullWord, option, rowIdx) {
+    const words = fullWord.split(' ');
+    let htmlStructure = '';
+    let targetAnswers = [];
+
+    words.forEach((word, wIdx) => {
+        let n = word.length;
+        let hintLen = 0;
+        
+        if (wIdx === 0) {
+            if (option === 'half') {
+                if (n % 2 !== 0) hintLen = (n - 1) / 2;
+                else hintLen = n / 2;
+                if (hintLen < 1 && n > 0) hintLen = 1; 
+            } else {
+                hintLen = parseInt(option) || 1;
+                if (hintLen > n) hintLen = n;
+            }
+        }
+
+        const hintText = word.slice(0, hintLen);
+        const remainTarget = word.slice(hintLen);
+        targetAnswers.push(remainTarget);
+
+        htmlStructure += `
+            <span class="inline-word-block" style="display: inline-flex; align-items: baseline; font-family: 'Courier New', Courier, monospace; font-size: 1.8rem; font-weight: bold; margin-right: 20px; user-select: none;">
+                <!-- 검은색 힌트 표시 -->
+                <span class="hint-black" style="color: var(--text); letter-spacing: 2px; margin-right:4px;">${hintText}</span>
+        `;
+
+        // 가로 스크롤 원천 봉쇄: 남은 글자수만큼 한 글자씩 개별 인풋 칸을 독립 나열
+        for (let i = 0; i < remainTarget.length; i++) {
+            htmlStructure += `
+                <span style="display: inline-block; width: 18px; border-bottom: 3px solid var(--secondary); margin-right: 4px; text-align: center; position: relative; height: 2.2rem; vertical-align: baseline;">
+                    <input type="text" class="quiz-answer-input char-input" 
+                           data-row-idx="${rowIdx}"
+                           data-word-idx="${wIdx}"
+                           data-char-idx="${i}"
+                           data-char-target="${remainTarget[i]}"
+                           maxlength="1" 
+                           style="width: 100%; height: 100%; border: none; background: transparent; color: #0047fa; font-family: inherit; font-size: inherit; font-weight: inherit; text-align: center; padding: 0; margin: 0; outline: none; z-index: 2; position: absolute; left: 0; top: 0;"
+                           onkeydown="handleCharKeyDown(event)"
+                           oninput="handleCharInput(event)">
+                </span>
+            `;
+        }
+        htmlStructure += `</span>`;
+    });
+
+    return { htmlStructure, targetAnswers };
+}
+
+// 글자 입력 즉시 다음 칸으로 자동 커서 이동 처리 로직
+function handleCharInput(event) {
+    const input = event.target;
+    if (input.value.length === 1) {
+        const inputs = Array.from(document.querySelectorAll('.quiz-answer-input'));
+        const nextIdx = inputs.indexOf(input) + 1;
+        if (nextIdx < inputs.length && !inputs[nextIdx].disabled) {
+            inputs[nextIdx].focus();
+        }
     }
-    return word.slice(0, hintLen) + '_'.repeat(Math.max(0, word.length - hintLen));
+}
+
+// 낱자 제어 키 이벤트 제어 (백스페이스 및 특수 기능 이동 키 바인딩)
+function handleCharKeyDown(event) {
+    const input = event.target;
+    const inputs = Array.from(document.querySelectorAll('.quiz-answer-input'));
+    const curIdx = inputs.indexOf(input);
+
+    if (isSubmitted && event.key === 'Enter') {
+        event.preventDefault();
+        nextQuestion();
+        return;
+    }
+
+    if (!isSubmitted) {
+        if (event.key === 'Backspace' && input.value.length === 0) {
+            // 글자가 없는 상태에서 백스페이스 누르면 이전 칸으로 이동 및 글자 지우기
+            if (curIdx > 0) {
+                inputs[curIdx - 1].focus();
+                inputs[curIdx - 1].value = '';
+                event.preventDefault();
+            }
+        } else if (event.key === 'Enter' || event.key === ' ' || event.key === 'Tab') {
+            event.preventDefault();
+            
+            // 공백, 엔터, 탭 처리 기믹 고도화 및 다음 칸/제출로 점프
+            if (curIdx < inputs.length - 1) {
+                inputs[curIdx + 1].focus();
+            } else {
+                submitAnswer();
+            }
+        }
+    }
 }
 
 function startTest(isRetry) {
@@ -191,30 +294,48 @@ function showQuestion() {
     const posEl = document.getElementById('quiz-pos');
     const extraEl = document.getElementById('quiz-extra');
 
+    extraEl.innerHTML = ''; 
+
     if (currentTestMode === 'synonym') {
         wordEl.innerText = q.word;
         posEl.innerText = q.pos;
-        extraEl.innerText = '';
 
         const reqSynCount = parseInt(document.getElementById('synonym-count-input').value) || 2;
         currentTargetSynonyms = q.synonyms.slice(0, reqSynCount);
 
         currentTargetSynonyms.forEach((syn, index) => {
-            const hint = calculateHint(syn, hintOpt);
-            createInputRow(container, index, `동의어 ${index + 1}`, hint);
+            const setup = getHintAndInputSetup(syn, hintOpt, index);
+            const row = document.createElement('div');
+            row.className = 'synonym-row';
+            row.style.marginBottom = "25px";
+            row.innerHTML = `
+                <div style="font-size:0.85rem; color:var(--secondary); margin-bottom:6px;">동의어 ${index + 1}</div>
+                <div class="inline-input-wrapper" style="display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
+                    ${setup.htmlStructure}
+                    <span class="feedback" id="feedback-${index}"></span>
+                </div>
+            `;
+            container.appendChild(row);
         });
 
     } else if (currentTestMode === 'korean') {
         wordEl.innerText = q.meaning;
         posEl.innerText = q.pos;
-        extraEl.innerText = '';
 
-        currentTargetSynonyms = [q.word];
-        const hint = calculateHint(q.word, hintOpt);
-        createInputRow(container, 0, '영단어 입력', hint);
+        const setup = getHintAndInputSetup(q.word, hintOpt, 0);
+        const row = document.createElement('div');
+        row.className = 'synonym-row';
+        row.innerHTML = `
+            <div class="inline-input-wrapper" style="display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
+                ${setup.htmlStructure}
+                <span class="feedback" id="feedback-0"></span>
+            </div>
+        `;
+        container.appendChild(row);
 
     } else if (currentTestMode === 'sentence') {
-        wordEl.innerText = q.meaning; 
+        // 예문 빈칸 채우기 테스트 시 단어 자체의 한국어 뜻 노출 제거
+        wordEl.innerText = ''; 
         posEl.innerText = q.pos;
 
         const baseWord = q.word.toLowerCase();
@@ -229,73 +350,86 @@ function showQuestion() {
             }
         }
 
-        currentTargetSynonyms = [detectedWord.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")];
+        const targetWord = detectedWord.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+        const setup = getHintAndInputSetup(targetWord, hintOpt, 0);
         
-        const hint = calculateHint(currentTargetSynonyms[0], hintOpt);
+        const sentenceWithInput = q.example.replace(new RegExp(`\\b${targetWord}\\b`, 'i'), `
+            <span style="display:inline-flex; align-items:baseline; background:rgba(0,0,0,0.04); padding: 4px 8px; border-radius:6px; vertical-align:middle; flex-wrap:wrap; gap:2px;">
+                ${setup.htmlStructure}
+                <span class="feedback" id="feedback-0" style="margin-left:5px;"></span>
+            </span>
+        `);
         
-        // 정답 단어 글자수만큼의 언더바(_) 칸을 생성하여 문장 내 가독성 확보
-        const blankRepresentation = "[ " + "_ ".repeat(currentTargetSynonyms[0].length).trim() + " ]";
-        const blankSentence = q.example.replace(new RegExp(`\\b${currentTargetSynonyms[0]}\\b`, 'i'), blankRepresentation);
-        
-        extraEl.innerHTML = `<div style="margin-bottom:10px; font-weight:600;">${blankSentence}</div><div style="font-size:0.95rem; color:var(--secondary);">${q.exampleMeaning}</div>`;
-        createInputRow(container, 0, '빈칸 단어 입력', hint);
+        // 예문과 예문 뜻만 출력되도록 구조 정제
+        extraEl.innerHTML = `
+            <div style="margin-bottom:15px; font-weight:600; line-height:1.8; font-size:1.2rem;">${sentenceWithInput}</div>
+            <div style="font-size:0.95rem; color:var(--secondary);">${q.exampleMeaning}</div>
+        `;
     }
 
-    const firstInput = container.querySelector('input');
+    const firstInput = document.querySelector('.quiz-answer-input');
     if (firstInput) firstInput.focus();
-}
-
-function createInputRow(container, index, labelText, hintText) {
-    const row = document.createElement('div');
-    row.className = 'synonym-row';
-    row.innerHTML = `
-        <label>${labelText}</label>
-        <div class="hint-text">${hintText.split('').join(' ')}</div>
-        <div class="input-container">
-            <input type="text" class="quiz-answer-input" data-index="${index}" placeholder="정답 입력" onkeydown="handleKeyDown(event)">
-            <span class="feedback" id="feedback-${index}"></span>
-        </div>
-    `;
-    container.appendChild(row);
-}
-
-// 엔터 클릭 핸들러 수정: 엔터를 쳤을 때 실제 제출/다음 버튼 동작을 가동
-function handleKeyDown(event) {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // 기본 개행 동작 정지
-        if (!isSubmitted) {
-            submitAnswer();
-        } else {
-            nextQuestion();
-        }
-    }
 }
 
 function submitAnswer() {
     if (isSubmitted) return;
 
-    const inputElements = document.querySelectorAll('.quiz-answer-input');
     let allCorrect = true;
 
-    inputElements.forEach(inputEl => {
-        const idx = parseInt(inputEl.getAttribute('data-index'));
-        const userAns = inputEl.value.trim().toLowerCase();
-        const correctAns = currentTargetSynonyms[idx] ? currentTargetSynonyms[idx].toLowerCase() : '';
-        const feedbackEl = document.getElementById(`feedback-${idx}`);
+    if (currentTestMode === 'synonym') {
+        const rows = document.querySelectorAll('.synonym-row');
+        rows.forEach((row, index) => {
+            const inputs = row.querySelectorAll('.quiz-answer-input');
+            let rowCorrect = true;
+            let fullCorrectAnswer = currentTargetSynonyms[index];
 
-        inputEl.disabled = true;
+            inputs.forEach(inputEl => {
+                const userChar = inputEl.value.trim().toLowerCase();
+                const correctChar = inputEl.getAttribute('data-char-target').toLowerCase();
+                inputEl.disabled = true;
+                if (userChar !== correctChar) {
+                    rowCorrect = false;
+                    allCorrect = false;
+                }
+            });
 
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            if (feedbackEl) {
+                if (rowCorrect) {
+                    feedbackEl.className = 'feedback correct';
+                    feedbackEl.innerText = '⭕';
+                } else {
+                    feedbackEl.className = 'feedback wrong';
+                    feedbackEl.innerText = `❌ (${fullCorrectAnswer})`;
+                }
+            }
+        });
+    } else {
+        const inputs = document.querySelectorAll('.quiz-answer-input');
+        let modeCorrect = true;
+        let fullWordTarget = (currentTestMode === 'korean') ? quizWords[currentIdx].word : extraElTargetWord();
+
+        inputs.forEach(inputEl => {
+            const userChar = inputEl.value.trim().toLowerCase();
+            const correctChar = inputEl.getAttribute('data-char-target').toLowerCase();
+            inputEl.disabled = true;
+            if (userChar !== correctChar) {
+                modeCorrect = false;
+                allCorrect = false;
+            }
+        });
+
+        const feedbackEl = document.getElementById('feedback-0');
         if (feedbackEl) {
-            if (userAns === correctAns && correctAns !== '') {
+            if (modeCorrect) {
                 feedbackEl.className = 'feedback correct';
                 feedbackEl.innerText = '⭕';
             } else {
-                allCorrect = false;
                 feedbackEl.className = 'feedback wrong';
-                feedbackEl.innerText = `❌ (${currentTargetSynonyms[idx]})`;
+                feedbackEl.innerText = `❌ (${fullWordTarget})`;
             }
         }
-    });
+    }
 
     const q = quizWords[currentIdx];
     if (allCorrect) score++;
@@ -314,8 +448,29 @@ function submitAnswer() {
     }
 }
 
+function extraElTargetWord() {
+    const q = quizWords[currentIdx];
+    const baseWord = q.word.toLowerCase();
+    const wordsInSentence = q.example.split(/[\s,.:;?!"'()]+/);
+    let detectedWord = q.word; 
+    for (let w of wordsInSentence) {
+        let clean = w.toLowerCase().trim();
+        if (clean.length >= 3 && (clean.startsWith(baseWord.slice(0, 3)) || baseWord.startsWith(clean.slice(0, 3)))) {
+            detectedWord = w; 
+            break;
+        }
+    }
+    return detectedWord.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+}
+
 function nextQuestion() { currentIdx++; showQuestion(); }
-function exitQuiz() { if (confirm('테스트를 중단하시겠습니까? 푼 문항만 기록에 저장됩니다.')) showResult(true); }
+
+function exitQuiz() { 
+    if (confirm('테스트를 중단하시겠습니까? 푼 문항만 기록에 저장됩니다.')) {
+        // 중단 확정 시 브라우저 히스토리 스택을 하나 제거하여 덮어쓰기 히스토리 무력화 후 결과 노출
+        showResult(true); 
+    }
+}
 
 function saveQuizRecord(totalCount, correctCount) {
     try {
