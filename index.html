@@ -11,8 +11,18 @@
     <!-- 상단 고정 바 -->
     <div id="global-header" class="top-bar">
         <button id="nav-back-btn" onclick="handleHeaderBack()" class="icon-btn hidden" title="뒤로가기">←</button>
+        <div id="timer-display" class="timer-text hidden">00:00</div>
         <div style="flex-grow: 1;"></div>
+        <button id="toc-btn" onclick="toggleTOC()" class="icon-btn hidden" title="목차">☰</button>
         <button onclick="toggleDarkMode()" class="icon-btn" title="다크모드">🌙</button>
+    </div>
+
+    <!-- 단어장 목차 오버레이 레이어 -->
+    <div id="toc-layer" class="toc-overlay hidden" onclick="toggleTOC()">
+        <div class="toc-content" onclick="event.stopPropagation()">
+            <h3>DAY 바로가기</h3>
+            <div id="toc-buttons-container" class="toc-grid"></div>
+        </div>
     </div>
 
     <!-- 설정 화면 -->
@@ -80,11 +90,15 @@
         <button id="next-btn" onclick="nextQuestion()" class="btn-success hidden" style="margin-top: 20px;">다음 문제</button>
     </div>
 
-    <!-- 결과 화면 -->
+    <!-- 결과 및 전체 리뷰 화면 -->
     <div id="result-screen" class="card view-screen hidden">
         <h2>테스트 결과</h2>
-        <p id="result-score" style="font-size: 1.2rem; white-space: pre-line; margin-bottom: 20px;"></p>
-        <button onclick="navigateTo('setup-screen')" class="btn-primary">처음으로</button>
+        <p id="result-score" style="font-size: 1.2rem; white-space: pre-line; margin-bottom: 20px; font-weight: bold;"></p>
+        <button onclick="navigateTo('setup-screen')" class="btn-primary" style="margin-bottom: 30px;">처음으로</button>
+        
+        <hr style="border: 0; border-top: 2px dashed var(--border); margin-bottom: 25px;">
+        <h3>테스트 상세 리뷰</h3>
+        <div id="review-container"></div>
     </div>
 
     <!-- 단어장 화면 -->

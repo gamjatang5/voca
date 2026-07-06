@@ -8,6 +8,8 @@
     --success: #28a745;
     --danger: #dc3545;
     --header-bg: rgba(255, 255, 255, 0.9);
+    --review-correct-bg: #e6f4ea;
+    --review-wrong-bg: #fce8e6;
 }
 
 [data-theme="dark"] {
@@ -20,6 +22,8 @@
     --success: #38a169;
     --danger: #e53e3e;
     --header-bg: rgba(18, 18, 18, 0.9);
+    --review-correct-bg: #1b3a24;
+    --review-wrong-bg: #441d1d;
 }
 
 body {
@@ -48,6 +52,20 @@ body {
     box-sizing: border-box;
     z-index: 1000;
     border-bottom: 1px solid var(--border);
+}
+
+.timer-text {
+    font-family: monospace;
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: var(--primary);
+    margin-left: 15px;
+    background: rgba(0, 123, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+[data-theme="dark"] .timer-text {
+    background: rgba(49, 130, 206, 0.2);
 }
 
 .icon-btn {
@@ -112,24 +130,9 @@ button:active { opacity: 0.8; }
     padding-bottom: 20px;
     border-bottom: 2px dashed var(--border);
 }
-.display-word {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--primary);
-    margin-bottom: 5px;
-}
-.display-pos {
-    font-size: 1rem;
-    font-style: italic;
-    color: var(--secondary);
-    margin-bottom: 10px;
-}
-.display-extra {
-    font-size: 1.15rem;
-    font-weight: 500;
-    line-height: 1.6;
-    color: var(--text);
-}
+.display-word { font-size: 2.2rem; font-weight: 800; color: var(--primary); margin-bottom: 5px; }
+.display-pos { font-size: 1rem; font-style: italic; color: var(--secondary); margin-bottom: 10px; }
+.display-extra { font-size: 1.15rem; font-weight: 500; line-height: 1.6; color: var(--text); }
 
 .synonym-row { margin-bottom: 18px; }
 .synonym-row label { display: block; font-size: 0.85rem; color: var(--secondary); margin-bottom: 6px; }
@@ -149,6 +152,7 @@ button:active { opacity: 0.8; }
 .correct { color: var(--success); }
 .wrong { color: var(--danger); }
 
+/* 단어장 레이아웃 */
 .day-section { margin-bottom: 25px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
 .day-header { background-color: var(--border); color: var(--text); padding: 12px 18px; font-size: 1.1rem; font-weight: 700; margin: 0; }
 .word-item { padding: 14px 18px; background-color: var(--card); line-height: 1.5; }
@@ -158,7 +162,36 @@ button:active { opacity: 0.8; }
 .word-item .syn-list { display: block; margin-top: 4px; font-size: 0.95rem; color: var(--secondary); }
 .word-item .meaning-text { display: block; margin-top: 4px; font-size: 1rem; font-weight: 500; }
 .word-item .example-box { display: block; margin-top: 6px; padding: 8px 12px; background: rgba(0,0,0,0.02); border-left: 3px solid var(--primary); font-size: 0.9rem; color: var(--secondary); }
-
 [data-theme="dark"] .word-item .example-box { background: rgba(255,255,255,0.02); }
 
 .history-item { padding: 14px; border-bottom: 1px solid var(--border); font-size: 0.95rem; line-height: 1.6; }
+
+/* 목차 오버레이 및 메뉴 디자인 */
+.toc-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4); z-index: 2000;
+    display: flex; justify-content: center; align-items: flex-start;
+    padding-top: 60px; box-sizing: border-box;
+}
+.toc-content {
+    background: var(--card); border: 1px solid var(--border);
+    width: 90%; max-width: 500px; max-height: 75vh; overflow-y: auto;
+    padding: 20px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.toc-content h3 { margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.toc-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.toc-day-btn {
+    padding: 10px 5px; font-size: 0.9rem; font-weight: bold; background: var(--border);
+    color: var(--text); border-radius: 6px; border: none; cursor: pointer; text-align: center; margin: 0;
+}
+.toc-day-btn:active { opacity: 0.7; }
+
+/* 리뷰(정오답 노출 박스) 항목 스타일 */
+.review-item {
+    padding: 15px; border-radius: 10px; margin-bottom: 12px;
+    border: 1px solid var(--border); line-height: 1.5;
+}
+.review-item.review-correct { background-color: var(--review-correct-bg); border-color: rgba(40, 167, 69, 0.2); }
+.review-item.review-wrong { background-color: var(--review-wrong-bg); border-color: rgba(220, 53, 69, 0.2); }
+.review-label-correct { color: var(--success); font-weight: bold; font-size: 0.9rem; display: block; margin-bottom: 4px; }
+.review-label-wrong { color: var(--danger); font-weight: bold; font-size: 0.9rem; display: block; margin-bottom: 4px; }

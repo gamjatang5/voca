@@ -9,11 +9,14 @@ let currentTestMode = "synonym";
 let currentTestTypeLabel = "동의어 철자";
 let currentTestDays = "";
 
+let timerInterval = null;
+let totalSeconds = 0;
+let quizReviewData = [];
+
 function parseCSV(text) {
     if (text.startsWith('\uFEFF')) {
         text = text.substring(1);
     }
-    
     const lines = text.split(/\r?\n/);
     const result = [];
     for (let i = 1; i < lines.length; i++) {
@@ -35,7 +38,6 @@ function parseCSV(text) {
             }
         }
         parts.push(currentPart.trim());
-        
         parts = parts.map(item => item.replace(/^["']|["']$/g, '').trim());
 
         if (parts.length >= 3) {
@@ -54,19 +56,14 @@ function parseCSV(text) {
 }
 
 fetch('data.csv')
-    .then(res => { 
-        if (!res.ok) throw new Error(); 
-        return res.arrayBuffer(); 
-    })
+    .then(res => { if (!res.ok) throw new Error(); return res.arrayBuffer(); })
     .then(buffer => {
         const decoder = new TextDecoder('euc-kr');
         let text = decoder.decode(buffer);
-        
         if (text.includes('')) {
             const utf8Decoder = new TextDecoder('utf-8');
             text = utf8Decoder.decode(buffer);
         }
-
         allWords = parseCSV(text); 
         checkWrongHistory(); 
     })
@@ -84,6 +81,35 @@ function checkWrongHistory() {
             }
         }
     } catch (e) {}
+}
+
+function startTimer() {
+    stopTimer();
+    totalSeconds = 0;
+    const display = document.getElementById('timer-display');
+    if (display) {
+        display.innerText = "00:00";
+        display.classList.remove('hidden');
+    }
+    timerInterval = setInterval(() => {
+        totalSeconds++;
+        const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+        const secs = String(totalSeconds % 60).padStart(2, '0');
+        if (display) display.innerText = `${mins}:${secs}`;
+    }, 1000);
+}
+
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
+function getFormattedTime() {
+    const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+    const secs = String(totalSeconds % 60).padStart(2, '0');
+    return `${mins}분 ${secs}초`;
 }
 
 window.addEventListener('popstate', (event) => {
@@ -127,8 +153,60 @@ function showScreen(id, updateHistory = true) {
         else backBtn.classList.remove('hidden');
     }
 
+    const tocBtn = document.getElementById('toc-btn');
+    if (tocBtn) {
+        if (id === 'wordlist-screen') tocBtn.classList.remove('hidden');
+        else tocBtn.classList.add('hidden');
+    }
+
+    const timerDisp = document.getElementById('timer-display');
+    if (timerDisp && id !== 'quiz-screen') {
+        timerDisp.classList.add('hidden');
+        stopTimer();
+    }
+
     if (id === 'wordlist-screen') viewWordList();
     if (id === 'history-screen') viewHistory();
+}
+
+function toggleTOC() {
+    const layer = document.getElementById('toc-layer');
+    if (!layer) return;
+    if (layer.classList.contains('hidden')) {
+        const container = document.getElementById('toc-buttons-container');
+        if (container) {
+            container.innerHTML = '';
+            for (let i = 1; i <= 30; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'toc-day-btn';
+                btn.innerText = `${i}`; // D 제거하고 숫자만 표시하도록 변경
+                btn.onclick = () => scrollToDay(i);
+                container.appendChild(btn);
+            }
+        }
+        layer.classList.remove('hidden');
+    } else {
+        layer.classList.add('hidden');
+    }
+}
+
+function scrollToDay(dayNum) {
+    toggleTOC();
+    const targetEl = document.getElementById(`day-anchor-${dayNum}`);
+    if (targetEl) {
+        const offset = 65;
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = targetEl.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    } else {
+        alert(`DAY ${dayNum} 섹션이 현재 단어장에 존재하지 않습니다.`);
+    }
 }
 
 function getHintAndInputSetup(fullWord, option, rowIdx) {
@@ -136,13 +214,11 @@ function getHintAndInputSetup(fullWord, option, rowIdx) {
     let htmlStructure = '';
     let targetAnswers = [];
 
-    // 단어 전체를 하나의 flex 컨테이너로 감싸 상하 정렬 정밀 교정 (image_b2e50c.png 버그 수정)
     htmlStructure += `<div style="display: inline-flex; align-items: flex-end; flex-wrap: wrap; row-gap: 10px; min-height: 2.5rem; vertical-align: bottom;">`;
 
     words.forEach((word, wIdx) => {
         let n = word.length;
         let hintLen = 0;
-        
         if (wIdx === 0) {
             if (option === 'half') {
                 if (n % 2 !== 0) hintLen = (n - 1) / 2;
@@ -185,52 +261,6 @@ function getHintAndInputSetup(fullWord, option, rowIdx) {
     return { htmlStructure, targetAnswers };
 }
 
-function handleCharKeyDown(event) {
-    const input = event.target;
-    const currentRowIdx = parseInt(input.getAttribute('data-row-idx'));
-    const allInputs = Array.from(document.querySelectorAll('.quiz-answer-input'));
-    
-    // 현재 줄(row)에 속한 인풋들만 필터링
-    const allRowInputs = allInputs.filter(inp => parseInt(inp.getAttribute('data-row-idx')) === currentRowIdx);
-    const curIdxInRow = allRowInputs.indexOf(input);
-
-    // 1. 이미 채점 결과가 나온 상태라면 엔터 입력 시 다음 문제로 이동
-    if (isSubmitted && event.key === 'Enter') {
-        event.preventDefault();
-        nextQuestion();
-        return;
-    }
-
-    if (!isSubmitted) {
-        // 2. 어떤 빈칸에서든 엔터, 스페이스, 탭을 누르면 다음 동의어 줄로 점프
-        if (event.key === 'Enter' || event.key === ' ' || event.key === 'Tab') {
-            event.preventDefault();
-            
-            // 다음 동의어 줄(currentRowIdx + 1)의 입력창들만 필터링
-            const nextRowInputs = allInputs.filter(inp => parseInt(inp.getAttribute('data-row-idx')) === (currentRowIdx + 1));
-
-            if (nextRowInputs.length > 0) {
-                // 다음 동의어 줄의 가장 첫 번째 글자 칸으로 바로 점프
-                nextRowInputs[0].focus();
-            } else {
-                // 더 이상 다음 동의어 줄이 없다면 (마지막 동의어 줄이면) 최종 채점 제출
-                submitAnswer();
-            }
-            return;
-        }
-
-        // 백스페이스 제어 (단어 내 이전 칸으로 가기)
-        if (event.key === 'Backspace' && input.value.length === 0) {
-            if (curIdxInRow > 0) {
-                allRowInputs[curIdxInRow - 1].focus();
-                allRowInputs[curIdxInRow - 1].value = '';
-                event.preventDefault();
-            }
-            return;
-        }
-    }
-}
-
 function handleCharInput(event) {
     const input = event.target;
     if (input.value.length === 1) {
@@ -239,6 +269,42 @@ function handleCharInput(event) {
         const nextIdx = inputs.indexOf(input) + 1;
         if (nextIdx < inputs.length && !inputs[nextIdx].disabled) {
             inputs[nextIdx].focus();
+        }
+    }
+}
+
+function handleCharKeyDown(event) {
+    const input = event.target;
+    const currentRowIdx = parseInt(input.getAttribute('data-row-idx'));
+    const allInputs = Array.from(document.querySelectorAll('.quiz-answer-input'));
+    const allRowInputs = allInputs.filter(inp => parseInt(inp.getAttribute('data-row-idx')) === currentRowIdx);
+    const curIdxInRow = allRowInputs.indexOf(input);
+
+    if (isSubmitted && event.key === 'Enter') {
+        event.preventDefault();
+        nextQuestion();
+        return;
+    }
+
+    if (!isSubmitted) {
+        if (event.key === 'Enter' || event.key === ' ' || event.key === 'Tab') {
+            event.preventDefault();
+            const nextRowInputs = allInputs.filter(inp => parseInt(inp.getAttribute('data-row-idx')) === (currentRowIdx + 1));
+            if (nextRowInputs.length > 0) {
+                nextRowInputs[0].focus();
+            } else {
+                submitAnswer();
+            }
+            return;
+        }
+
+        if (event.key === 'Backspace' && input.value.length === 0) {
+            if (curIdxInRow > 0) {
+                allRowInputs[curIdxInRow - 1].focus();
+                allRowInputs[curIdxInRow - 1].value = '';
+                event.preventDefault();
+            }
+            return;
         }
     }
 }
@@ -278,9 +344,11 @@ function startTest(isRetry) {
     quizWords = pool.slice(0, count);
     currentIdx = 0;
     score = 0;
+    quizReviewData = []; 
     if (!isRetry) wrongWords = [];
 
     navigateTo('quiz-screen');
+    startTimer(); 
     showQuestion();
 }
 
@@ -343,7 +411,7 @@ function showQuestion() {
 
     } else if (currentTestMode === 'sentence') {
         wordEl.innerText = ''; 
-        posEl.innerText = q.pos;
+        posEl.innerText = '';
 
         const baseWord = q.word.toLowerCase();
         const wordsInSentence = q.example.split(/[\s,.:;?!"'()]+/);
@@ -368,8 +436,8 @@ function showQuestion() {
         `);
         
         extraEl.innerHTML = `
-            <div style="margin-bottom:15px; font-weight:600; line-height:1.8; font-size:1.2rem;">${sentenceWithInput}</div>
-            <div style="font-size:0.95rem; color:var(--secondary);">${q.exampleMeaning}</div>
+            <div class="quiz-sentence-text" style="margin-bottom:15px; font-weight:600; line-height:1.8; font-size:1.2rem;">${sentenceWithInput}</div>
+            <div class="quiz-sentence-meaning" style="font-size:0.95rem; color:var(--secondary);">${q.exampleMeaning}</div>
         `;
     }
 
@@ -381,6 +449,9 @@ function submitAnswer() {
     if (isSubmitted) return;
 
     let allCorrect = true;
+    const q = quizWords[currentIdx];
+    let userAnswersSummary = []; 
+    let correctAnswersSummary = [];
 
     if (currentTestMode === 'synonym') {
         const rows = document.querySelectorAll('.synonym-row');
@@ -388,8 +459,14 @@ function submitAnswer() {
             const inputs = row.querySelectorAll('.quiz-answer-input');
             let rowCorrect = true;
             let fullCorrectAnswer = currentTargetSynonyms[index];
+            
+            // 이미지 버그 수정: 힌트 텍스트 엘리먼트에서 직접 글자를 가져옴
+            const hintEl = row.querySelector('.hint-black');
+            let hintPart = hintEl ? hintEl.innerText : "";
+            let userTypedPart = "";
 
             inputs.forEach(inputEl => {
+                userTypedPart += inputEl.value; // 사용자가 입력한 값만 정확히 누적
                 const userChar = inputEl.value.trim().toLowerCase();
                 const correctChar = inputEl.getAttribute('data-char-target').toLowerCase();
                 inputEl.disabled = true;
@@ -398,6 +475,10 @@ function submitAnswer() {
                     allCorrect = false;
                 }
             });
+
+            // 입력하지 않은 빈칸이 있을 때 유령 글자가 채워지는 현상 방지
+            userAnswersSummary.push(hintPart + userTypedPart);
+            correctAnswersSummary.push(fullCorrectAnswer);
 
             const feedbackEl = document.getElementById(`feedback-${index}`);
             if (feedbackEl) {
@@ -411,11 +492,20 @@ function submitAnswer() {
             }
         });
     } else {
-        const inputs = document.querySelectorAll('.quiz-answer-input');
+        const container = document.getElementById('inputs-container');
+        const extraContainer = document.getElementById('quiz-extra');
+        const activeContainer = (currentTestMode === 'sentence') ? extraContainer : container;
+        
+        const inputs = activeContainer.querySelectorAll('.quiz-answer-input');
         let modeCorrect = true;
-        let fullWordTarget = (currentTestMode === 'korean') ? quizWords[currentIdx].word : extraElTargetWord();
+        let fullWordTarget = (currentTestMode === 'korean') ? q.word : extraElTargetWord();
+        
+        const hintEl = activeContainer.querySelector('.hint-black');
+        let hintPart = hintEl ? hintEl.innerText : "";
+        let userTypedPart = "";
 
         inputs.forEach(inputEl => {
+            userTypedPart += inputEl.value;
             const userChar = inputEl.value.trim().toLowerCase();
             const correctChar = inputEl.getAttribute('data-char-target').toLowerCase();
             inputEl.disabled = true;
@@ -424,6 +514,9 @@ function submitAnswer() {
                 allCorrect = false;
             }
         });
+
+        userAnswersSummary.push(hintPart + userTypedPart);
+        correctAnswersSummary.push(fullWordTarget);
 
         const feedbackEl = document.getElementById('feedback-0');
         if (feedbackEl) {
@@ -437,21 +530,33 @@ function submitAnswer() {
         }
     }
 
-    const q = quizWords[currentIdx];
     if (allCorrect) score++;
     else {
         if (q && !wrongWords.some(w => w.word === q.word)) wrongWords.push(q);
     }
+
+    let questionTextForReview = "";
+    if (currentTestMode === 'synonym') {
+        questionTextForReview = `${q.word} <span style="font-size:0.85rem; font-style:italic; color:var(--secondary);">(${q.pos})</span>`;
+    } else if (currentTestMode === 'korean') {
+        questionTextForReview = `${q.meaning} <span style="font-size:0.85rem; font-style:italic; color:var(--secondary);">(${q.pos})</span>`;
+    } else if (currentTestMode === 'sentence') {
+        questionTextForReview = `<div style="font-weight:600;">${q.example}</div><div style="font-size:0.85rem; color:var(--secondary); margin-top:2px;">${q.exampleMeaning}</div>`;
+    }
+
+    quizReviewData.push({
+        questionHTML: questionTextForReview,
+        isCorrect: allCorrect,
+        userAns: userAnswersSummary.join(' / '),
+        correctAns: correctAnswersSummary.join(' / ')
+    });
 
     try { localStorage.setItem('wrongWords', JSON.stringify(wrongWords)); } catch (e) {}
     
     isSubmitted = true;
     document.getElementById('submit-btn').classList.add('hidden');
     const nextBtn = document.getElementById('next-btn');
-    if (nextBtn) { 
-        nextBtn.classList.remove('hidden'); 
-        nextBtn.focus(); 
-    }
+    if (nextBtn) { nextBtn.classList.remove('hidden'); nextBtn.focus(); }
 }
 
 function extraElTargetWord() {
@@ -470,12 +575,7 @@ function extraElTargetWord() {
 }
 
 function nextQuestion() { currentIdx++; showQuestion(); }
-
-function exitQuiz() { 
-    if (confirm('테스트를 중단하시겠습니까? 푼 문항만 기록에 저장됩니다.')) {
-        showResult(true); 
-    }
-}
+function exitQuiz() { if (confirm('테스트를 중단하시겠습니까? 푼 문항만 기록에 저장됩니다.')) showResult(true); }
 
 function saveQuizRecord(totalCount, correctCount) {
     try {
@@ -488,24 +588,53 @@ function saveQuizRecord(totalCount, correctCount) {
             type: currentTestTypeLabel,
             days: currentTestDays,
             total: totalCount,
-            correct: correctCount
+            correct: correctCount,
+            time: getFormattedTime() 
         });
         localStorage.setItem('quizHistory', JSON.stringify(historyData));
     } catch (e) {}
 }
 
 function showResult(isInterrupted = false) {
+    stopTimer(); 
     showScreen('result-screen', false);
     const totalAttempted = isInterrupted ? (isSubmitted ? currentIdx + 1 : currentIdx) : (quizWords ? quizWords.length : 0);
-    
+    const timeTakenStr = getFormattedTime();
+
     const scoreEl = document.getElementById('result-score');
     if (scoreEl) {
         scoreEl.innerText = isInterrupted 
-            ? `테스트가 중단되었습니다.\n푼 문제: ${totalAttempted}문제 중 ${score}문제 맞춤`
-            : `테스트 완료!\n총 ${totalAttempted}문제 중 ${score}문제 맞추셨습니다.`;
+            ? `⏱️ 소요 시간: ${timeTakenStr}\n테스트가 중단되었습니다.\n푼 문제: ${totalAttempted}문제 중 ${score}문제 맞춤`
+            : `⏱️ 소요 시간: ${timeTakenStr}\n테스트 완료!\n총 ${totalAttempted}문제 중 ${score}문제 맞추셨습니다.`;
     }
     if (totalAttempted > 0) saveQuizRecord(totalAttempted, score);
+    
+    buildReviewList();
     checkWrongHistory();
+}
+
+function buildReviewList() {
+    const container = document.getElementById('review-container');
+    if (!container) return;
+    if (quizReviewData.length === 0) {
+        container.innerHTML = '<p>리뷰할 문항 데이터가 존재하지 않습니다.</p>';
+        return;
+    }
+
+    container.innerHTML = quizReviewData.map((item, idx) => {
+        const statusClass = item.isCorrect ? 'review-correct' : 'review-wrong';
+        const labelText = item.isCorrect ? '<span class="review-label-correct">⭕ 정답</span>' : '<span class="review-label-wrong">❌ 오답</span>';
+        return `
+            <div class="review-item ${statusClass}">
+                ${labelText}
+                <div style="margin-bottom:6px;"><strong>Q${idx + 1}.</strong> ${item.questionHTML}</div>
+                <div style="font-size:0.95rem; border-top: 1px dashed rgba(0,0,0,0.05); padding-top: 6px; margin-top: 6px;">
+                    <span style="color:var(--secondary);">제출한 답:</span> ${item.userAns || '(공백)'}<br>
+                    <span style="color:var(--secondary);">실제 정답:</span> <strong style="color:var(--text);">${item.correctAns}</strong>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 function viewWordList() {
@@ -518,7 +647,7 @@ function viewWordList() {
 
     let html = '';
     Object.keys(grouped).sort((a, b) => Number(a) - Number(b)).forEach(day => {
-        html += `<div class="day-section">`;
+        html += `<div class="day-section" id="day-anchor-${day}">`;
         html += `<h4 class="day-header">DAY ${day}</h4>`;
         grouped[day].forEach(w => {
             html += `
@@ -545,7 +674,7 @@ function viewHistory() {
 
     content.innerHTML = historyData.map(h => `
         <div class="history-item">
-            <strong>일시:</strong> ${h.date || ''}<br>
+            <strong>일시:</strong> ${h.date || ''} (소요 시간: ${h.time || '기록 없음'})<br>
             <strong>종류:</strong> ${h.type || '동의어 철자'} (DAY ${h.days || ''})<br>
             <strong>결과:</strong> ${h.total || 0}문제 중 ${h.correct || 0}문제 정답 (${h.total ? Math.round((h.correct/h.total)*100) : 0}%)
         </div>
@@ -559,7 +688,7 @@ function exportHistory() {
 
     let textContent = "영어 단어 테스트 기록\n====================\n\n";
     historyData.forEach((h, idx) => {
-        textContent += `[기록 ${idx + 1}]\n일시: ${h.date || ''}\n종류: ${h.type || ''} (DAY: ${h.days || ''})\n결과: ${h.total || 0}문제 중 ${h.correct || 0}문제 맞춤 (${h.total ? Math.round((h.correct/h.total)*100) : 0}%)\n--------------------\n`;
+        textContent += `[기록 ${idx + 1}]\n일시: ${h.date || ''} (소요시간: ${h.time || '없음'})\n종류: ${h.type || ''} (DAY: ${h.days || ''})\n결과: ${h.total || 0}문제 중 ${h.correct || 0}문제 맞춤 (${h.total ? Math.round((h.correct/h.total)*100) : 0}%)\n--------------------\n`;
     });
 
     const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });
