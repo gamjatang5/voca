@@ -5,18 +5,23 @@ let currentIdx = 0;
 let score = 0;
 let currentTargetSynonyms = [];
 let isSubmitted = false;
-let currentTestMode = "synonym"; // synonym, korean, sentence
+let currentTestMode = "synonym"; 
 let currentTestTypeLabel = "동의어 철자";
 let currentTestDays = "";
 
+// CSV 파싱 및 한글 깨짐 방지 디코딩 처리
 function parseCSV(text) {
+    // 엑셀에서 생성된 UTF-8 CSV 파일의 BOM(Byte Order Mark) 제거
+    if (text.startsWith('\uFEFF')) {
+        text = text.substring(1);
+    }
+    
     const lines = text.split(/\r?\n/);
     const result = [];
     for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
         
-        // 콤마 파싱 (따옴표 내 콤마 보존 처리)
         let parts = [];
         let insideQuote = false;
         let currentPart = '';
@@ -33,7 +38,6 @@ function parseCSV(text) {
         }
         parts.push(currentPart.trim());
         
-        // 데이터 정제
         parts = parts.map(item => item.replace(/^["']|["']$/g, '').trim());
 
         if (parts.length >= 3) {
@@ -51,10 +55,20 @@ function parseCSV(text) {
     return result;
 }
 
+// 파일 읽어올 때 텍스트 디코더 적용으로 한글 깨짐 현상 차단
 fetch('data.csv')
-    .then(res => { if (!res.ok) throw new Error(); return res.text(); })
-    .then(text => { allWords = parseCSV(text); checkWrongHistory(); })
-    .catch(() => alert('data.csv 파일을 불러오지 못했습니다. 칼럼 양식을 확인해 주세요.'));
+    .then(res => { 
+        if (!res.ok) throw new Error(); 
+        return res.arrayBuffer(); 
+    })
+    .then(buffer => {
+        // UTF-8 디코더 명시로 한글 인코딩 깨짐을 원천 방지
+        const decoder = new TextDecoder('utf-8');
+        const text = decoder.decode(buffer);
+        allWords = parseCSV(text); 
+        checkWrongHistory(); 
+    })
+    .catch(() => alert('data.csv 파일을 불러오지 못했습니다. 파일 인코딩(UTF-8)을 확인해 주세요.'));
 
 function checkWrongHistory() {
     try {
@@ -134,7 +148,6 @@ function startTest(isRetry) {
         currentTestDays = [...new Set(pool.map(w => w.day))].join(',');
     }
 
-    // 예문 채우기 모드 시 예문 데이터가 비어있는 항목 필터링
     if (currentTestMode === 'sentence') {
         pool = pool.filter(w => w.example.trim() !== '');
     }
@@ -178,7 +191,6 @@ function showQuestion() {
     const posEl = document.getElementById('quiz-pos');
     const extraEl = document.getElementById('quiz-extra');
 
-    // 모드에 따른 화면 구성 및 레이아웃 제어 (불필요 라벨 제거)
     if (currentTestMode === 'synonym') {
         wordEl.innerText = q.word;
         posEl.innerText = q.pos;
@@ -202,14 +214,12 @@ function showQuestion() {
         createInputRow(container, 0, '영단어 입력', hint);
 
     } else if (currentTestMode === 'sentence') {
-        wordEl.innerText = q.meaning; // 힌트로 한국어 뜻을 상단 표기
+        wordEl.innerText = q.meaning; 
         posEl.innerText = q.pos;
 
-        // 예문에서 핵심 단어 매칭 및 변형(굴절형) 자동 추출 알고리즘
         const baseWord = q.word.toLowerCase();
         const wordsInSentence = q.example.split(/[\s,.:;?!"'()]+/);
         
-        // 굴절형 자동 타겟 매칭 (단어 시작 패턴 분석)
         let detectedWord = q.word; 
         for (let w of wordsInSentence) {
             let clean = w.toLowerCase().trim();
@@ -221,9 +231,11 @@ function showQuestion() {
 
         currentTargetSynonyms = [detectedWord.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")];
         
-        // 문장 내 빈칸 처리
         const hint = calculateHint(currentTargetSynonyms[0], hintOpt);
-        const blankSentence = q.example.replace(new RegExp(`\\b${currentTargetSynonyms[0]}\\b`, 'i'), " [ _____ ] ");
+        
+        // 정답 단어 글자수만큼의 언더바(_) 칸을 생성하여 문장 내 가독성 확보
+        const blankRepresentation = "[ " + "_ ".repeat(currentTargetSynonyms[0].length).trim() + " ]";
+        const blankSentence = q.example.replace(new RegExp(`\\b${currentTargetSynonyms[0]}\\b`, 'i'), blankRepresentation);
         
         extraEl.innerHTML = `<div style="margin-bottom:10px; font-weight:600;">${blankSentence}</div><div style="font-size:0.95rem; color:var(--secondary);">${q.exampleMeaning}</div>`;
         createInputRow(container, 0, '빈칸 단어 입력', hint);
@@ -247,10 +259,15 @@ function createInputRow(container, index, labelText, hintText) {
     container.appendChild(row);
 }
 
+// 엔터 클릭 핸들러 수정: 엔터를 쳤을 때 실제 제출/다음 버튼 동작을 가동
 function handleKeyDown(event) {
     if (event.key === 'Enter') {
-        if (!isSubmitted) submitAnswer();
-        else nextQuestion();
+        event.preventDefault(); // 기본 개행 동작 정지
+        if (!isSubmitted) {
+            submitAnswer();
+        } else {
+            nextQuestion();
+        }
     }
 }
 
@@ -291,7 +308,10 @@ function submitAnswer() {
     isSubmitted = true;
     document.getElementById('submit-btn').classList.add('hidden');
     const nextBtn = document.getElementById('next-btn');
-    if (nextBtn) { nextBtn.classList.remove('hidden'); nextBtn.focus(); }
+    if (nextBtn) { 
+        nextBtn.classList.remove('hidden'); 
+        nextBtn.focus(); 
+    }
 }
 
 function nextQuestion() { currentIdx++; showQuestion(); }
