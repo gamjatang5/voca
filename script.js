@@ -9,7 +9,6 @@ let currentTestMode = "synonym";
 let currentTestTypeLabel = "동의어 철자";
 let currentTestDays = "";
 
-// CSV 파싱 및 인코딩 처리
 function parseCSV(text) {
     if (text.startsWith('\uFEFF')) {
         text = text.substring(1);
@@ -87,18 +86,13 @@ function checkWrongHistory() {
     } catch (e) {}
 }
 
-// 브라우저 및 아이폰 뒤로가기(스와이프) 제어 연동 고도화
 window.addEventListener('popstate', (event) => {
     const currentActiveScreen = document.querySelector('.view-screen:not(.hidden)');
-    
-    // 테스트 도중 뒤로가기 시도를 감지하면 중단 절차 작동
     if (currentActiveScreen && currentActiveScreen.id === 'quiz-screen') {
-        // 히스토리를 강제로 복구시켜 화면 이탈을 방지한 뒤 중단 얼럿 띄움
         history.pushState({ screen: 'quiz-screen' }, '', '');
         exitQuiz();
         return;
     }
-
     if (event.state && event.state.screen) {
         showScreen(event.state.screen, false);
     } else {
@@ -137,11 +131,13 @@ function showScreen(id, updateHistory = true) {
     if (id === 'history-screen') viewHistory();
 }
 
-// 가로 스크롤 문제를 완벽 차단하기 위해 글자수 단위 개별 단독 인풋 생성 알고리즘으로 전면 전개
 function getHintAndInputSetup(fullWord, option, rowIdx) {
     const words = fullWord.split(' ');
     let htmlStructure = '';
     let targetAnswers = [];
+
+    // 단어 전체를 하나의 flex 컨테이너로 감싸 상하 정렬 정밀 교정 (image_b2e50c.png 버그 수정)
+    htmlStructure += `<div style="display: inline-flex; align-items: flex-end; flex-wrap: wrap; row-gap: 10px; min-height: 2.5rem; vertical-align: bottom;">`;
 
     words.forEach((word, wIdx) => {
         let n = word.length;
@@ -163,22 +159,20 @@ function getHintAndInputSetup(fullWord, option, rowIdx) {
         targetAnswers.push(remainTarget);
 
         htmlStructure += `
-            <span class="inline-word-block" style="display: inline-flex; align-items: baseline; font-family: 'Courier New', Courier, monospace; font-size: 1.8rem; font-weight: bold; margin-right: 20px; user-select: none;">
-                <!-- 검은색 힌트 표시 -->
-                <span class="hint-black" style="color: var(--text); letter-spacing: 2px; margin-right:4px;">${hintText}</span>
+            <span class="inline-word-block" style="display: inline-flex; align-items: flex-end; font-family: 'Courier New', Courier, monospace; font-size: 1.8rem; font-weight: bold; margin-right: 24px; user-select: none; height: 2.2rem; line-height: 2.2rem;">
+                ${hintText ? `<span class="hint-black" style="color: var(--text); letter-spacing: 2px; margin-right:4px; display: inline-block; height: 2.2rem; line-height: 2.2rem;">${hintText}</span>` : ''}
         `;
 
-        // 가로 스크롤 원천 봉쇄: 남은 글자수만큼 한 글자씩 개별 인풋 칸을 독립 나열
         for (let i = 0; i < remainTarget.length; i++) {
             htmlStructure += `
-                <span style="display: inline-block; width: 18px; border-bottom: 3px solid var(--secondary); margin-right: 4px; text-align: center; position: relative; height: 2.2rem; vertical-align: baseline;">
+                <span style="display: inline-block; width: 18px; border-bottom: 3px solid var(--secondary); margin-right: 4px; text-align: center; position: relative; height: 2.2rem;">
                     <input type="text" class="quiz-answer-input char-input" 
                            data-row-idx="${rowIdx}"
                            data-word-idx="${wIdx}"
                            data-char-idx="${i}"
                            data-char-target="${remainTarget[i]}"
                            maxlength="1" 
-                           style="width: 100%; height: 100%; border: none; background: transparent; color: #0047fa; font-family: inherit; font-size: inherit; font-weight: inherit; text-align: center; padding: 0; margin: 0; outline: none; z-index: 2; position: absolute; left: 0; top: 0;"
+                           style="width: 100%; height: 100%; border: none; background: transparent; color: #0047fa; font-family: inherit; font-size: inherit; font-weight: inherit; text-align: center; padding: 0; margin: 0; outline: none; z-index: 2; position: absolute; left: 0; top: 0; line-height: 2.2rem;"
                            onkeydown="handleCharKeyDown(event)"
                            oninput="handleCharInput(event)">
                 </span>
@@ -187,27 +181,20 @@ function getHintAndInputSetup(fullWord, option, rowIdx) {
         htmlStructure += `</span>`;
     });
 
+    htmlStructure += `</div>`;
     return { htmlStructure, targetAnswers };
 }
 
-// 글자 입력 즉시 다음 칸으로 자동 커서 이동 처리 로직
-function handleCharInput(event) {
-    const input = event.target;
-    if (input.value.length === 1) {
-        const inputs = Array.from(document.querySelectorAll('.quiz-answer-input'));
-        const nextIdx = inputs.indexOf(input) + 1;
-        if (nextIdx < inputs.length && !inputs[nextIdx].disabled) {
-            inputs[nextIdx].focus();
-        }
-    }
-}
-
-// 낱자 제어 키 이벤트 제어 (백스페이스 및 특수 기능 이동 키 바인딩)
 function handleCharKeyDown(event) {
     const input = event.target;
-    const inputs = Array.from(document.querySelectorAll('.quiz-answer-input'));
-    const curIdx = inputs.indexOf(input);
+    const currentRowIdx = parseInt(input.getAttribute('data-row-idx'));
+    const allInputs = Array.from(document.querySelectorAll('.quiz-answer-input'));
+    
+    // 현재 줄(row)에 속한 인풋들만 필터링
+    const allRowInputs = allInputs.filter(inp => parseInt(inp.getAttribute('data-row-idx')) === currentRowIdx);
+    const curIdxInRow = allRowInputs.indexOf(input);
 
+    // 1. 이미 채점 결과가 나온 상태라면 엔터 입력 시 다음 문제로 이동
     if (isSubmitted && event.key === 'Enter') {
         event.preventDefault();
         nextQuestion();
@@ -215,22 +202,43 @@ function handleCharKeyDown(event) {
     }
 
     if (!isSubmitted) {
-        if (event.key === 'Backspace' && input.value.length === 0) {
-            // 글자가 없는 상태에서 백스페이스 누르면 이전 칸으로 이동 및 글자 지우기
-            if (curIdx > 0) {
-                inputs[curIdx - 1].focus();
-                inputs[curIdx - 1].value = '';
-                event.preventDefault();
-            }
-        } else if (event.key === 'Enter' || event.key === ' ' || event.key === 'Tab') {
+        // 2. 어떤 빈칸에서든 엔터, 스페이스, 탭을 누르면 다음 동의어 줄로 점프
+        if (event.key === 'Enter' || event.key === ' ' || event.key === 'Tab') {
             event.preventDefault();
             
-            // 공백, 엔터, 탭 처리 기믹 고도화 및 다음 칸/제출로 점프
-            if (curIdx < inputs.length - 1) {
-                inputs[curIdx + 1].focus();
+            // 다음 동의어 줄(currentRowIdx + 1)의 입력창들만 필터링
+            const nextRowInputs = allInputs.filter(inp => parseInt(inp.getAttribute('data-row-idx')) === (currentRowIdx + 1));
+
+            if (nextRowInputs.length > 0) {
+                // 다음 동의어 줄의 가장 첫 번째 글자 칸으로 바로 점프
+                nextRowInputs[0].focus();
             } else {
+                // 더 이상 다음 동의어 줄이 없다면 (마지막 동의어 줄이면) 최종 채점 제출
                 submitAnswer();
             }
+            return;
+        }
+
+        // 백스페이스 제어 (단어 내 이전 칸으로 가기)
+        if (event.key === 'Backspace' && input.value.length === 0) {
+            if (curIdxInRow > 0) {
+                allRowInputs[curIdxInRow - 1].focus();
+                allRowInputs[curIdxInRow - 1].value = '';
+                event.preventDefault();
+            }
+            return;
+        }
+    }
+}
+
+function handleCharInput(event) {
+    const input = event.target;
+    if (input.value.length === 1) {
+        const rowIdx = input.getAttribute('data-row-idx');
+        const inputs = Array.from(document.querySelectorAll(`.quiz-answer-input[data-row-idx="${rowIdx}"]`));
+        const nextIdx = inputs.indexOf(input) + 1;
+        if (nextIdx < inputs.length && !inputs[nextIdx].disabled) {
+            inputs[nextIdx].focus();
         }
     }
 }
@@ -310,9 +318,9 @@ function showQuestion() {
             row.style.marginBottom = "25px";
             row.innerHTML = `
                 <div style="font-size:0.85rem; color:var(--secondary); margin-bottom:6px;">동의어 ${index + 1}</div>
-                <div class="inline-input-wrapper" style="display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div class="inline-input-wrapper" style="display:flex; align-items:baseline; flex-wrap:wrap; gap:10px; vertical-align:baseline;">
                     ${setup.htmlStructure}
-                    <span class="feedback" id="feedback-${index}"></span>
+                    <span class="feedback" id="feedback-${index}" style="vertical-align:baseline;"></span>
                 </div>
             `;
             container.appendChild(row);
@@ -326,15 +334,14 @@ function showQuestion() {
         const row = document.createElement('div');
         row.className = 'synonym-row';
         row.innerHTML = `
-            <div class="inline-input-wrapper" style="display:flex; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div class="inline-input-wrapper" style="display:flex; align-items:baseline; flex-wrap:wrap; gap:10px; vertical-align:baseline;">
                 ${setup.htmlStructure}
-                <span class="feedback" id="feedback-0"></span>
+                <span class="feedback" id="feedback-0" style="vertical-align:baseline;"></span>
             </div>
         `;
         container.appendChild(row);
 
     } else if (currentTestMode === 'sentence') {
-        // 예문 빈칸 채우기 테스트 시 단어 자체의 한국어 뜻 노출 제거
         wordEl.innerText = ''; 
         posEl.innerText = q.pos;
 
@@ -354,13 +361,12 @@ function showQuestion() {
         const setup = getHintAndInputSetup(targetWord, hintOpt, 0);
         
         const sentenceWithInput = q.example.replace(new RegExp(`\\b${targetWord}\\b`, 'i'), `
-            <span style="display:inline-flex; align-items:baseline; background:rgba(0,0,0,0.04); padding: 4px 8px; border-radius:6px; vertical-align:middle; flex-wrap:wrap; gap:2px;">
+            <span style="display:inline-flex; align-items:baseline; background:rgba(0,0,0,0.04); padding: 4px 8px; border-radius:6px; vertical-align:baseline; flex-wrap:wrap; gap:2px; line-height: 2.2rem;">
                 ${setup.htmlStructure}
-                <span class="feedback" id="feedback-0" style="margin-left:5px;"></span>
+                <span class="feedback" id="feedback-0" style="margin-left:5px; vertical-align:baseline;"></span>
             </span>
         `);
         
-        // 예문과 예문 뜻만 출력되도록 구조 정제
         extraEl.innerHTML = `
             <div style="margin-bottom:15px; font-weight:600; line-height:1.8; font-size:1.2rem;">${sentenceWithInput}</div>
             <div style="font-size:0.95rem; color:var(--secondary);">${q.exampleMeaning}</div>
@@ -467,7 +473,6 @@ function nextQuestion() { currentIdx++; showQuestion(); }
 
 function exitQuiz() { 
     if (confirm('테스트를 중단하시겠습니까? 푼 문항만 기록에 저장됩니다.')) {
-        // 중단 확정 시 브라우저 히스토리 스택을 하나 제거하여 덮어쓰기 히스토리 무력화 후 결과 노출
         showResult(true); 
     }
 }
