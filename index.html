@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <!-- 상단 고정 바 (기호 버튼 적용) -->
+    <!-- 상단 고정 바 -->
     <div id="global-header" class="top-bar">
         <button id="nav-back-btn" onclick="handleHeaderBack()" class="icon-btn hidden" title="뒤로가기">←</button>
         <div style="flex-grow: 1;"></div>
@@ -23,6 +23,14 @@
             <input type="text" id="day-input" value="1">
         </div>
         <div class="form-group">
+            <label>테스트 종류:</label>
+            <select id="test-type-input" onchange="toggleSetupOptions()">
+                <option value="synonym" selected>동의어 철자 맞추기</option>
+                <option value="korean">한국어 뜻 보고 영단어 맞추기</option>
+                <option value="sentence">예문 빈칸 채우기</option>
+            </select>
+        </div>
+        <div class="form-group">
             <label>문제 수:</label>
             <input type="number" id="quiz-count" value="60">
         </div>
@@ -35,7 +43,7 @@
                 <option value="half">전체 글자수 절반</option>
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="synonym-count-group">
             <label>테스트할 동의어 개수:</label>
             <select id="synonym-count-input">
                 <option value="1">1개</option>
@@ -60,10 +68,10 @@
             <button onclick="exitQuiz()" class="btn-danger" style="width: auto; margin: 0; padding: 5px 12px; font-size: 0.85rem;">테스트 중단</button>
         </div>
         
-        <!-- 디자인 전면 수정 영역 -->
         <div class="quiz-info">
             <div id="quiz-word" class="display-word"></div>
             <div id="quiz-pos" class="display-pos"></div>
+            <div id="quiz-extra" class="display-extra"></div>
         </div>
         
         <div id="inputs-container"></div>

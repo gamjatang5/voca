@@ -28,11 +28,10 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     max-width: 600px;
     margin: 0 auto;
-    padding: 70px 20px 20px 20px; /* 상단 고정바 공간 확보 */
+    padding: 70px 20px 20px 20px;
     transition: background 0.2s, color 0.2s;
 }
 
-/* 스마트 상단바 디자인 (고정형) */
 .top-bar {
     position: fixed;
     top: 0;
@@ -51,7 +50,6 @@ body {
     border-bottom: 1px solid var(--border);
 }
 
-/* 기호 형태의 아이콘 버튼 */
 .icon-btn {
     background: none;
     border: none;
@@ -62,9 +60,7 @@ body {
     margin: 0;
     padding: 5px 10px;
 }
-.icon-btn:hover {
-    opacity: 0.7;
-}
+.icon-btn:hover { opacity: 0.7; }
 
 .card {
     background-color: var(--card);
@@ -75,7 +71,6 @@ body {
 }
 
 .hidden { display: none !important; }
-
 .form-group { margin-bottom: 15px; }
 .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.95rem; }
 
@@ -91,7 +86,7 @@ input[type="text"], input[type="number"], select {
 }
 
 input[type="checkbox"] { width: 18px; height: 18px; }
-.form-group checkbox label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.form-group.checkbox label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 
 button {
     width: 100%;
@@ -111,7 +106,6 @@ button:active { opacity: 0.8; }
 .btn-success { background-color: var(--success); color: white; }
 .btn-danger { background-color: var(--danger); color: white; }
 
-/* 테스트 화면 전면 타이포그래피 변경 */
 .quiz-info {
     text-align: center;
     margin: 25px 0;
@@ -128,19 +122,18 @@ button:active { opacity: 0.8; }
     font-size: 1rem;
     font-style: italic;
     color: var(--secondary);
+    margin-bottom: 10px;
+}
+.display-extra {
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text);
 }
 
-.synonym-row {
-    margin-bottom: 18px;
-}
-.synonym-row label {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--secondary);
-    margin-bottom: 6px;
-}
+.synonym-row { margin-bottom: 18px; }
+.synonym-row label { display: block; font-size: 0.85rem; color: var(--secondary); margin-bottom: 6px; }
 
-/* 힌트 글자 스타일 강조 */
 .hint-text {
     font-family: 'Courier New', Courier, monospace;
     font-size: 1.3rem;
@@ -149,65 +142,23 @@ button:active { opacity: 0.8; }
     color: var(--text);
 }
 
-.input-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 4px;
-}
-.input-container input {
-    flex: 1;
-}
+.input-container { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.input-container input { flex: 1; }
 
-.feedback {
-    font-weight: bold;
-    font-size: 1rem;
-    white-space: nowrap;
-}
+.feedback { font-weight: bold; font-size: 1rem; white-space: nowrap; }
 .correct { color: var(--success); }
 .wrong { color: var(--danger); }
 
-/* 단어장 레이아웃 */
-.day-section {
-    margin-bottom: 25px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-}
-.day-header {
-    background-color: var(--border);
-    color: var(--text);
-    padding: 12px 18px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin: 0;
-}
-.word-item {
-    padding: 14px 18px;
-    background-color: var(--card);
-}
-.word-item:not(:last-child) {
-    border-bottom: 1px solid var(--border);
-}
-.word-item strong {
-    font-size: 1.1rem;
-}
-.word-item .pos-tag {
-    font-size: 0.85rem;
-    color: var(--secondary);
-    margin-left: 6px;
-    font-style: italic;
-}
-.word-item .syn-list {
-    display: block;
-    margin-top: 6px;
-    font-size: 1rem;
-    color: var(--secondary);
-}
+.day-section { margin-bottom: 25px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.day-header { background-color: var(--border); color: var(--text); padding: 12px 18px; font-size: 1.1rem; font-weight: 700; margin: 0; }
+.word-item { padding: 14px 18px; background-color: var(--card); line-height: 1.5; }
+.word-item:not(:last-child) { border-bottom: 1px solid var(--border); }
+.word-item strong { font-size: 1.1rem; }
+.word-item .pos-tag { font-size: 0.85rem; color: var(--secondary); margin-left: 6px; font-style: italic; }
+.word-item .syn-list { display: block; margin-top: 4px; font-size: 0.95rem; color: var(--secondary); }
+.word-item .meaning-text { display: block; margin-top: 4px; font-size: 1rem; font-weight: 500; }
+.word-item .example-box { display: block; margin-top: 6px; padding: 8px 12px; background: rgba(0,0,0,0.02); border-left: 3px solid var(--primary); font-size: 0.9rem; color: var(--secondary); }
 
-.history-item {
-    padding: 14px;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.95rem;
-    line-height: 1.6;
-}
+[data-theme="dark"] .word-item .example-box { background: rgba(255,255,255,0.02); }
+
+.history-item { padding: 14px; border-bottom: 1px solid var(--border); font-size: 0.95rem; line-height: 1.6; }
