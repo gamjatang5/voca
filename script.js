@@ -13,12 +13,14 @@ let timerInterval = null;
 let totalSeconds = 0;
 let quizReviewData = [];
 
+// 아포스트로피(') 버그를 원천 차단한 CSV 파싱 알고리즘
 function parseCSV(text) {
     if (text.startsWith('\uFEFF')) {
         text = text.substring(1);
     }
     const lines = text.split(/\r?\n/);
     const result = [];
+    
     for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
@@ -26,9 +28,11 @@ function parseCSV(text) {
         let parts = [];
         let insideQuote = false;
         let currentPart = '';
+        
+        // 해결책 반영: 오직 큰따옴표(")만 묶음 기호로 인정. 작은따옴표(')는 일반 문자로 통과
         for (let j = 0; j < line.length; j++) {
             const char = line[j];
-            if (char === '"' || char === "'") {
+            if (char === '"') {
                 insideQuote = !insideQuote;
             } else if (char === ',' && !insideQuote) {
                 parts.push(currentPart.trim());
@@ -38,14 +42,19 @@ function parseCSV(text) {
             }
         }
         parts.push(currentPart.trim());
-        parts = parts.map(item => item.replace(/^["']|["']$/g, '').trim());
+        
+        // 데이터 정제 시 양 끝의 큰따옴표만 제거 (작은따옴표는 건드리지 않음)
+        parts = parts.map(item => item.replace(/^"|"$/g, '').trim());
 
         if (parts.length >= 3) {
+            const rawSyns = [parts[3], parts[4], parts[5], parts[6]];
+            const validSyns = rawSyns.map(s => s ? s.trim() : "").filter(Boolean);
+
             result.push({
                 day: parts[0],
                 word: parts[1],
                 pos: parts[2],
-                synonyms: [parts[3], parts[4], parts[5], parts[6]].filter(Boolean),
+                synonyms: validSyns,
                 meaning: parts[7] || '',
                 example: parts[8] || '',
                 exampleMeaning: parts[9] || ''
@@ -179,7 +188,7 @@ function toggleTOC() {
             for (let i = 1; i <= 30; i++) {
                 const btn = document.createElement('button');
                 btn.className = 'toc-day-btn';
-                btn.innerText = `${i}`; // D 제거하고 숫자만 표시하도록 변경
+                btn.innerText = `${i}`;
                 btn.onclick = () => scrollToDay(i);
                 container.appendChild(btn);
             }
@@ -219,7 +228,9 @@ function getHintAndInputSetup(fullWord, option, rowIdx) {
     words.forEach((word, wIdx) => {
         let n = word.length;
         let hintLen = 0;
-        if (wIdx === 0) {
+        
+        // '앞글자 힌트 없음(none)' 옵션 예외 처리 연동
+        if (wIdx === 0 && option !== 'none') {
             if (option === 'half') {
                 if (n % 2 !== 0) hintLen = (n - 1) / 2;
                 else hintLen = n / 2;
@@ -460,13 +471,12 @@ function submitAnswer() {
             let rowCorrect = true;
             let fullCorrectAnswer = currentTargetSynonyms[index];
             
-            // 이미지 버그 수정: 힌트 텍스트 엘리먼트에서 직접 글자를 가져옴
             const hintEl = row.querySelector('.hint-black');
             let hintPart = hintEl ? hintEl.innerText : "";
             let userTypedPart = "";
 
             inputs.forEach(inputEl => {
-                userTypedPart += inputEl.value; // 사용자가 입력한 값만 정확히 누적
+                userTypedPart += inputEl.value; 
                 const userChar = inputEl.value.trim().toLowerCase();
                 const correctChar = inputEl.getAttribute('data-char-target').toLowerCase();
                 inputEl.disabled = true;
@@ -476,7 +486,6 @@ function submitAnswer() {
                 }
             });
 
-            // 입력하지 않은 빈칸이 있을 때 유령 글자가 채워지는 현상 방지
             userAnswersSummary.push(hintPart + userTypedPart);
             correctAnswersSummary.push(fullCorrectAnswer);
 
