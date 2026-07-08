@@ -8,7 +8,6 @@
 </head>
 <body>
 
-    <!-- 상단 고정 바 -->
     <div id="global-header" class="top-bar">
         <button id="nav-back-btn" onclick="handleHeaderBack()" class="icon-btn hidden" title="뒤로가기">←</button>
         <div id="timer-display" class="timer-text hidden">00:00</div>
@@ -17,7 +16,6 @@
         <button onclick="toggleDarkMode()" class="icon-btn" title="다크모드">🌙</button>
     </div>
 
-    <!-- 단어장 목차 오버레이 레이어 -->
     <div id="toc-layer" class="toc-overlay hidden" onclick="toggleTOC()">
         <div class="toc-content" onclick="event.stopPropagation()">
             <h3>DAY 바로가기</h3>
@@ -25,7 +23,6 @@
         </div>
     </div>
 
-    <!-- 설정 화면 -->
     <div id="setup-screen" class="card view-screen">
         <h2>단어 테스트 설정</h2>
         <div class="form-group">
@@ -38,6 +35,7 @@
                 <option value="synonym" selected>동의어 철자 맞추기</option>
                 <option value="korean">한국어 뜻 보고 영단어 맞추기</option>
                 <option value="sentence">예문 빈칸 채우기</option>
+                <option value="sentence_no_meaning">예문 빈칸 채우기 (한글 뜻 없음)</option>
             </select>
         </div>
         <div class="form-group">
@@ -72,7 +70,6 @@
         <button onclick="navigateTo('history-screen')" class="btn-secondary">테스트 기록 보기</button>
     </div>
 
-    <!-- 테스트 화면 -->
     <div id="quiz-screen" class="card view-screen hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3 id="quiz-progress" style="margin: 0; font-size: 1rem; color: var(--secondary);"></h3>
@@ -91,7 +88,6 @@
         <button id="next-btn" onclick="nextQuestion()" class="btn-success hidden" style="margin-top: 20px;">다음 문제</button>
     </div>
 
-    <!-- 결과 및 전체 리뷰 화면 -->
     <div id="result-screen" class="card view-screen hidden">
         <h2>테스트 결과</h2>
         <p id="result-score" style="font-size: 1.2rem; white-space: pre-line; margin-bottom: 20px; font-weight: bold;"></p>
@@ -102,13 +98,11 @@
         <div id="review-container"></div>
     </div>
 
-    <!-- 단어장 화면 -->
     <div id="wordlist-screen" class="card view-screen hidden">
         <h2>단어장</h2>
         <div id="wordlist-content"></div>
     </div>
 
-    <!-- 기록 화면 -->
     <div id="history-screen" class="card view-screen hidden">
         <h2>테스트 기록</h2>
         <div style="display: flex; gap: 10px; margin-bottom: 15px;">

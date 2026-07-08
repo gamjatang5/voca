@@ -1,3 +1,4 @@
+// script.js
 let allWords = [];
 let quizWords = [];
 let wrongWords = [];
@@ -13,7 +14,11 @@ let timerInterval = null;
 let totalSeconds = 0;
 let quizReviewData = [];
 
-// 아포스트로피(') 버그를 원천 차단한 CSV 파싱 알고리즘
+// 불규칙 동사 하드코딩 (미니 사전)
+const irregularVerbs = {
+    "arise": ["arose", "arisen"], "awake": ["awoke", "awoken"], "be": ["is", "am", "are", "was", "were", "been", "being"], "bear": ["bore", "born", "borne"], "beat": ["beat", "beaten"], "become": ["became", "become"], "begin": ["began", "begun"], "bend": ["bent", "bent"], "bet": ["bet", "bet"], "bind": ["bound", "bound"], "bite": ["bit", "bitten"], "bleed": ["bled", "bled"], "blow": ["blew", "blown"], "break": ["broke", "broken"], "bring": ["brought", "brought"], "build": ["built", "built"], "burn": ["burnt", "burned"], "burst": ["burst", "burst"], "buy": ["bought", "bought"], "catch": ["caught", "caught"], "choose": ["chose", "chosen"], "come": ["came", "come"], "cost": ["cost", "cost"], "creep": ["crept", "crept"], "cut": ["cut", "cut"], "deal": ["dealt", "dealt"], "dig": ["dug", "dug"], "do": ["did", "done"], "draw": ["drew", "drawn"], "drink": ["drank", "drunk"], "drive": ["drove", "driven"], "eat": ["ate", "eaten"], "fall": ["fell", "fallen"], "feed": ["fed", "fed"], "feel": ["felt", "felt"], "fight": ["fought", "fought"], "find": ["found", "found"], "flee": ["fled", "fled"], "fly": ["flew", "flown"], "forbid": ["forbade", "forbidden"], "forget": ["forgot", "forgotten"], "forgive": ["forgave", "forgiven"], "freeze": ["froze", "frozen"], "get": ["got", "gotten"], "give": ["gave", "given"], "go": ["went", "gone"], "grow": ["grew", "grown"], "hang": ["hung", "hung"], "have": ["had", "had", "has"], "hear": ["heard", "heard"], "hide": ["hid", "hidden"], "hit": ["hit", "hit"], "hold": ["held", "held"], "hurt": ["hurt", "hurt"], "keep": ["kept", "kept"], "know": ["knew", "known"], "lay": ["laid", "laid"], "lead": ["led", "led"], "leave": ["left", "left"], "lend": ["lent", "lent"], "let": ["let", "let"], "lie": ["lay", "lain"], "light": ["lit", "lit"], "lose": ["lost", "lost"], "make": ["made", "made"], "mean": ["meant", "meant"], "meet": ["met", "met"], "pay": ["paid", "paid"], "put": ["put", "put"], "read": ["read", "read"], "ride": ["rode", "ridden"], "ring": ["rang", "rung"], "rise": ["rose", "risen"], "run": ["ran", "run"], "say": ["said", "said"], "see": ["saw", "seen"], "seek": ["sought", "sought"], "sell": ["sold", "sold"], "send": ["sent", "sent"], "set": ["set", "set"], "shake": ["shook", "shaken"], "shine": ["shone", "shone"], "shoot": ["shot", "shot"], "show": ["showed", "shown"], "shut": ["shut", "shut"], "sing": ["sang", "sung"], "sink": ["sank", "sunk"], "sit": ["sat", "sat"], "sleep": ["slept", "slept"], "slide": ["slid", "slid"], "speak": ["spoke", "spoken"], "spend": ["spent", "spent"], "spin": ["spun", "spun"], "split": ["split", "split"], "spread": ["spread", "spread"], "spring": ["sprang", "sprung"], "stand": ["stood", "stood"], "steal": ["stole", "stolen"], "stick": ["stuck", "stuck"], "sting": ["stung", "stung"], "stink": ["stank", "stunk"], "strike": ["struck", "struck"], "swear": ["swore", "sworn"], "sweep": ["swept", "swept"], "swim": ["swam", "swum"], "swing": ["swung", "swung"], "take": ["took", "taken"], "teach": ["taught", "taught"], "tear": ["tore", "torn"], "tell": ["told", "told"], "think": ["thought", "thought"], "throw": ["threw", "thrown"], "understand": ["understood", "understood"], "wake": ["woke", "woken"], "wear": ["wore", "worn"], "win": ["won", "won"], "write": ["wrote", "written"]
+};
+
 function parseCSV(text) {
     if (text.startsWith('\uFEFF')) {
         text = text.substring(1);
@@ -29,7 +34,6 @@ function parseCSV(text) {
         let insideQuote = false;
         let currentPart = '';
         
-        // 해결책 반영: 오직 큰따옴표(")만 묶음 기호로 인정. 작은따옴표(')는 일반 문자로 통과
         for (let j = 0; j < line.length; j++) {
             const char = line[j];
             if (char === '"') {
@@ -42,8 +46,6 @@ function parseCSV(text) {
             }
         }
         parts.push(currentPart.trim());
-        
-        // 데이터 정제 시 양 끝의 큰따옴표만 제거 (작은따옴표는 건드리지 않음)
         parts = parts.map(item => item.replace(/^"|"$/g, '').trim());
 
         if (parts.length >= 3) {
@@ -229,7 +231,6 @@ function getHintAndInputSetup(fullWord, option, rowIdx) {
         let n = word.length;
         let hintLen = 0;
         
-        // '앞글자 힌트 없음(none)' 옵션 예외 처리 연동
         if (wIdx === 0 && option !== 'none') {
             if (option === 'half') {
                 if (n % 2 !== 0) hintLen = (n - 1) / 2;
@@ -237,7 +238,12 @@ function getHintAndInputSetup(fullWord, option, rowIdx) {
                 if (hintLen < 1 && n > 0) hintLen = 1; 
             } else {
                 hintLen = parseInt(option) || 1;
-                if (hintLen > n) hintLen = n;
+            }
+
+            if (hintLen >= n && n > 1) {
+                hintLen = 1;
+            } else if (hintLen >= n && n === 1) {
+                hintLen = 0;
             }
         }
 
@@ -320,12 +326,63 @@ function handleCharKeyDown(event) {
     }
 }
 
+// 예문 속 단어/불규칙 변형어/숙어 위치 역추적 함수
+function findWordInSentence(word, sentence) {
+    // 하이픈(-)은 제거하지 않고 보존
+    const cleanSentence = sentence.replace(/[.,\/#!$%\^&\*;:{}=_`~()]/g, ""); 
+    const sentenceWords = cleanSentence.split(/\s+/);
+    const baseWords = word.split(/\s+/);
+    
+    let firstWordCandidates = [baseWords[0].toLowerCase()];
+    const bw = baseWords[0].toLowerCase();
+    
+    firstWordCandidates.push(bw + 's', bw + 'es', bw + 'd', bw + 'ed', bw + 'ing');
+    if (bw.endsWith('e')) firstWordCandidates.push(bw.slice(0, -1) + 'ing', bw.slice(0, -1) + 'd');
+    if (bw.endsWith('y')) firstWordCandidates.push(bw.slice(0, -1) + 'ies', bw.slice(0, -1) + 'ied');
+    
+    if (irregularVerbs[bw]) {
+        firstWordCandidates.push(...irregularVerbs[bw]);
+    }
+
+    for (let i = 0; i < sentenceWords.length; i++) {
+        let sw = sentenceWords[i].toLowerCase();
+        
+        if (firstWordCandidates.includes(sw) || sw.startsWith(bw.slice(0, 4))) {
+            let match = true;
+            let detectedPhrase = [sentenceWords[i]];
+            for (let j = 1; j < baseWords.length; j++) {
+                if (i + j >= sentenceWords.length || sentenceWords[i+j].toLowerCase() !== baseWords[j].toLowerCase()) {
+                    match = false;
+                    break;
+                }
+                detectedPhrase.push(sentenceWords[i+j]);
+            }
+            if (match) {
+                return detectedPhrase.join(" ");
+            }
+        }
+    }
+
+    for (let w of sentenceWords) {
+        let clean = w.toLowerCase();
+        if (clean.length >= 3 && (clean.startsWith(word.toLowerCase().slice(0, 3)) || word.toLowerCase().startsWith(clean.slice(0, 3)))) {
+            return w;
+        }
+    }
+    return word;
+}
+
 function startTest(isRetry) {
     let pool = isRetry ? [...wrongWords] : [...allWords];
     currentTestMode = document.getElementById('test-type-input').value;
 
     if (!isRetry) {
-        const labels = { synonym: "동의어 철자", korean: "한국어 뜻 매칭", sentence: "예문 빈칸" };
+        const labels = { 
+            synonym: "동의어 철자", 
+            korean: "한국어 뜻 매칭", 
+            sentence: "예문 빈칸", 
+            sentence_no_meaning: "예문 빈칸 (뜻 숨김)" 
+        };
         currentTestTypeLabel = labels[currentTestMode];
         const dayInput = document.getElementById('day-input');
         currentTestDays = dayInput ? dayInput.value.trim() : "1";
@@ -336,7 +393,7 @@ function startTest(isRetry) {
         currentTestDays = [...new Set(pool.map(w => w.day))].join(',');
     }
 
-    if (currentTestMode === 'sentence') {
+    if (currentTestMode === 'sentence' || currentTestMode === 'sentence_no_meaning') {
         pool = pool.filter(w => w.example.trim() !== '');
     }
 
@@ -420,23 +477,11 @@ function showQuestion() {
         `;
         container.appendChild(row);
 
-    } else if (currentTestMode === 'sentence') {
+    } else if (currentTestMode === 'sentence' || currentTestMode === 'sentence_no_meaning') {
         wordEl.innerText = ''; 
         posEl.innerText = '';
 
-        const baseWord = q.word.toLowerCase();
-        const wordsInSentence = q.example.split(/[\s,.:;?!"'()]+/);
-        
-        let detectedWord = q.word; 
-        for (let w of wordsInSentence) {
-            let clean = w.toLowerCase().trim();
-            if (clean.length >= 3 && (clean.startsWith(baseWord.slice(0, 3)) || baseWord.startsWith(clean.slice(0, 3)))) {
-                detectedWord = w; 
-                break;
-            }
-        }
-
-        const targetWord = detectedWord.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+        const targetWord = findWordInSentence(q.word, q.example);
         const setup = getHintAndInputSetup(targetWord, hintOpt, 0);
         
         const sentenceWithInput = q.example.replace(new RegExp(`\\b${targetWord}\\b`, 'i'), `
@@ -446,9 +491,11 @@ function showQuestion() {
             </span>
         `);
         
+        const meaningHTML = currentTestMode === 'sentence' ? `<div class="quiz-sentence-meaning" style="font-size:0.95rem; color:var(--secondary);">${q.exampleMeaning}</div>` : '';
+
         extraEl.innerHTML = `
             <div class="quiz-sentence-text" style="margin-bottom:15px; font-weight:600; line-height:1.8; font-size:1.2rem;">${sentenceWithInput}</div>
-            <div class="quiz-sentence-meaning" style="font-size:0.95rem; color:var(--secondary);">${q.exampleMeaning}</div>
+            ${meaningHTML}
         `;
     }
 
@@ -503,11 +550,11 @@ function submitAnswer() {
     } else {
         const container = document.getElementById('inputs-container');
         const extraContainer = document.getElementById('quiz-extra');
-        const activeContainer = (currentTestMode === 'sentence') ? extraContainer : container;
+        const activeContainer = (currentTestMode === 'sentence' || currentTestMode === 'sentence_no_meaning') ? extraContainer : container;
         
         const inputs = activeContainer.querySelectorAll('.quiz-answer-input');
         let modeCorrect = true;
-        let fullWordTarget = (currentTestMode === 'korean') ? q.word : extraElTargetWord();
+        let fullWordTarget = (currentTestMode === 'korean') ? q.word : findWordInSentence(q.word, q.example);
         
         const hintEl = activeContainer.querySelector('.hint-black');
         let hintPart = hintEl ? hintEl.innerText : "";
@@ -549,8 +596,9 @@ function submitAnswer() {
         questionTextForReview = `${q.word} <span style="font-size:0.85rem; font-style:italic; color:var(--secondary);">(${q.pos})</span>`;
     } else if (currentTestMode === 'korean') {
         questionTextForReview = `${q.meaning} <span style="font-size:0.85rem; font-style:italic; color:var(--secondary);">(${q.pos})</span>`;
-    } else if (currentTestMode === 'sentence') {
-        questionTextForReview = `<div style="font-weight:600;">${q.example}</div><div style="font-size:0.85rem; color:var(--secondary); margin-top:2px;">${q.exampleMeaning}</div>`;
+    } else if (currentTestMode === 'sentence' || currentTestMode === 'sentence_no_meaning') {
+        const meaningHTML = currentTestMode === 'sentence' ? `<div style="font-size:0.85rem; color:var(--secondary); margin-top:2px;">${q.exampleMeaning}</div>` : '';
+        questionTextForReview = `<div style="font-weight:600;">${q.example}</div>${meaningHTML}`;
     }
 
     quizReviewData.push({
@@ -566,21 +614,6 @@ function submitAnswer() {
     document.getElementById('submit-btn').classList.add('hidden');
     const nextBtn = document.getElementById('next-btn');
     if (nextBtn) { nextBtn.classList.remove('hidden'); nextBtn.focus(); }
-}
-
-function extraElTargetWord() {
-    const q = quizWords[currentIdx];
-    const baseWord = q.word.toLowerCase();
-    const wordsInSentence = q.example.split(/[\s,.:;?!"'()]+/);
-    let detectedWord = q.word; 
-    for (let w of wordsInSentence) {
-        let clean = w.toLowerCase().trim();
-        if (clean.length >= 3 && (clean.startsWith(baseWord.slice(0, 3)) || baseWord.startsWith(clean.slice(0, 3)))) {
-            detectedWord = w; 
-            break;
-        }
-    }
-    return detectedWord.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
 }
 
 function nextQuestion() { currentIdx++; showQuestion(); }
