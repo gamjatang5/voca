@@ -1,4 +1,3 @@
-// script.js
 let allWords = [];
 let quizWords = [];
 let wrongWords = [];
@@ -13,8 +12,8 @@ let currentTestDays = "";
 let timerInterval = null;
 let totalSeconds = 0;
 let quizReviewData = [];
+let currentHistoryId = null;
 
-// 불규칙 동사 하드코딩 (미니 사전)
 const irregularVerbs = {
     "arise": ["arose", "arisen"], "awake": ["awoke", "awoken"], "be": ["is", "am", "are", "was", "were", "been", "being"], "bear": ["bore", "born", "borne"], "beat": ["beat", "beaten"], "become": ["became", "become"], "begin": ["began", "begun"], "bend": ["bent", "bent"], "bet": ["bet", "bet"], "bind": ["bound", "bound"], "bite": ["bit", "bitten"], "bleed": ["bled", "bled"], "blow": ["blew", "blown"], "break": ["broke", "broken"], "bring": ["brought", "brought"], "build": ["built", "built"], "burn": ["burnt", "burned"], "burst": ["burst", "burst"], "buy": ["bought", "bought"], "catch": ["caught", "caught"], "choose": ["chose", "chosen"], "come": ["came", "come"], "cost": ["cost", "cost"], "creep": ["crept", "crept"], "cut": ["cut", "cut"], "deal": ["dealt", "dealt"], "dig": ["dug", "dug"], "do": ["did", "done"], "draw": ["drew", "drawn"], "drink": ["drank", "drunk"], "drive": ["drove", "driven"], "eat": ["ate", "eaten"], "fall": ["fell", "fallen"], "feed": ["fed", "fed"], "feel": ["felt", "felt"], "fight": ["fought", "fought"], "find": ["found", "found"], "flee": ["fled", "fled"], "fly": ["flew", "flown"], "forbid": ["forbade", "forbidden"], "forget": ["forgot", "forgotten"], "forgive": ["forgave", "forgiven"], "freeze": ["froze", "frozen"], "get": ["got", "gotten"], "give": ["gave", "given"], "go": ["went", "gone"], "grow": ["grew", "grown"], "hang": ["hung", "hung"], "have": ["had", "had", "has"], "hear": ["heard", "heard"], "hide": ["hid", "hidden"], "hit": ["hit", "hit"], "hold": ["held", "held"], "hurt": ["hurt", "hurt"], "keep": ["kept", "kept"], "know": ["knew", "known"], "lay": ["laid", "laid"], "lead": ["led", "led"], "leave": ["left", "left"], "lend": ["lent", "lent"], "let": ["let", "let"], "lie": ["lay", "lain"], "light": ["lit", "lit"], "lose": ["lost", "lost"], "make": ["made", "made"], "mean": ["meant", "meant"], "meet": ["met", "met"], "pay": ["paid", "paid"], "put": ["put", "put"], "read": ["read", "read"], "ride": ["rode", "ridden"], "ring": ["rang", "rung"], "rise": ["rose", "risen"], "run": ["ran", "run"], "say": ["said", "said"], "see": ["saw", "seen"], "seek": ["sought", "sought"], "sell": ["sold", "sold"], "send": ["sent", "sent"], "set": ["set", "set"], "shake": ["shook", "shaken"], "shine": ["shone", "shone"], "shoot": ["shot", "shot"], "show": ["showed", "shown"], "shut": ["shut", "shut"], "sing": ["sang", "sung"], "sink": ["sank", "sunk"], "sit": ["sat", "sat"], "sleep": ["slept", "slept"], "slide": ["slid", "slid"], "speak": ["spoke", "spoken"], "spend": ["spent", "spent"], "spin": ["spun", "spun"], "split": ["split", "split"], "spread": ["spread", "spread"], "spring": ["sprang", "sprung"], "stand": ["stood", "stood"], "steal": ["stole", "stolen"], "stick": ["stuck", "stuck"], "sting": ["stung", "stung"], "stink": ["stank", "stunk"], "strike": ["struck", "struck"], "swear": ["swore", "sworn"], "sweep": ["swept", "swept"], "swim": ["swam", "swum"], "swing": ["swung", "swung"], "take": ["took", "taken"], "teach": ["taught", "taught"], "tear": ["tore", "torn"], "tell": ["told", "told"], "think": ["thought", "thought"], "throw": ["threw", "thrown"], "understand": ["understood", "understood"], "wake": ["woke", "woken"], "wear": ["wore", "worn"], "win": ["won", "won"], "write": ["wrote", "written"]
 };
@@ -94,19 +93,17 @@ function checkWrongHistory() {
     } catch (e) {}
 }
 
-function startTimer() {
+function startTimer(resume = false) {
     stopTimer();
-    totalSeconds = 0;
+    if (!resume) totalSeconds = 0;
     const display = document.getElementById('timer-display');
     if (display) {
-        display.innerText = "00:00";
+        display.innerText = getFormattedTimeOnly();
         display.classList.remove('hidden');
     }
     timerInterval = setInterval(() => {
         totalSeconds++;
-        const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-        const secs = String(totalSeconds % 60).padStart(2, '0');
-        if (display) display.innerText = `${mins}:${secs}`;
+        if (display) display.innerText = getFormattedTimeOnly();
     }, 1000);
 }
 
@@ -115,6 +112,12 @@ function stopTimer() {
         clearInterval(timerInterval);
         timerInterval = null;
     }
+}
+
+function getFormattedTimeOnly() {
+    const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+    const secs = String(totalSeconds % 60).padStart(2, '0');
+    return `${mins}:${secs}`;
 }
 
 function getFormattedTime() {
@@ -126,8 +129,8 @@ function getFormattedTime() {
 window.addEventListener('popstate', (event) => {
     const currentActiveScreen = document.querySelector('.view-screen:not(.hidden)');
     if (currentActiveScreen && currentActiveScreen.id === 'quiz-screen') {
-        history.pushState({ screen: 'quiz-screen' }, '', '');
-        exitQuiz();
+        history.replaceState({ screen: 'setup-screen' }, '', '');
+        pauseQuiz(false, 'setup-screen');
         return;
     }
     if (event.state && event.state.screen) {
@@ -137,17 +140,24 @@ window.addEventListener('popstate', (event) => {
     }
 });
 
+window.addEventListener('beforeunload', (event) => {
+    const currentActiveScreen = document.querySelector('.view-screen:not(.hidden)');
+    if (currentActiveScreen && currentActiveScreen.id === 'quiz-screen') {
+        pauseQuiz(true, 'setup-screen');
+    }
+});
+
 function navigateTo(screenId) {
     history.pushState({ screen: screenId }, '', '');
     showScreen(screenId, true);
 }
 
-function handleHeaderBack() { 
+function handleHeaderHome() { 
     const currentActiveScreen = document.querySelector('.view-screen:not(.hidden)');
     if (currentActiveScreen && currentActiveScreen.id === 'quiz-screen') {
-        exitQuiz();
+        pauseQuiz(false, 'setup-screen');
     } else {
-        window.history.back(); 
+        navigateTo('setup-screen');
     }
 }
 
@@ -158,10 +168,10 @@ function showScreen(id, updateHistory = true) {
     const target = document.getElementById(id);
     if (target) target.classList.remove('hidden');
 
-    const backBtn = document.getElementById('nav-back-btn');
-    if (backBtn) {
-        if (id === 'setup-screen') backBtn.classList.add('hidden');
-        else backBtn.classList.remove('hidden');
+    const homeBtn = document.getElementById('nav-home-btn');
+    if (homeBtn) {
+        if (id === 'setup-screen') homeBtn.classList.add('hidden');
+        else homeBtn.classList.remove('hidden');
     }
 
     const tocBtn = document.getElementById('toc-btn');
@@ -326,9 +336,7 @@ function handleCharKeyDown(event) {
     }
 }
 
-// 예문 속 단어/불규칙 변형어/숙어 위치 역추적 함수
 function findWordInSentence(word, sentence) {
-    // 하이픈(-)은 제거하지 않고 보존
     const cleanSentence = sentence.replace(/[.,\/#!$%\^&\*;:{}=_`~()]/g, ""); 
     const sentenceWords = cleanSentence.split(/\s+/);
     const baseWords = word.split(/\s+/);
@@ -409,6 +417,7 @@ function startTest(isRetry) {
     let count = quizCountInput ? (parseInt(quizCountInput.value) || 60) : 60;
     if (count > pool.length) count = pool.length;
     
+    currentHistoryId = Date.now();
     quizWords = pool.slice(0, count);
     currentIdx = 0;
     score = 0;
@@ -421,7 +430,10 @@ function startTest(isRetry) {
 }
 
 function showQuestion() {
-    if (currentIdx >= quizWords.length) return showResult();
+    if (currentIdx >= quizWords.length) {
+        showResult();
+        return;
+    }
 
     isSubmitted = false;
     document.getElementById('submit-btn').classList.remove('hidden');
@@ -617,39 +629,83 @@ function submitAnswer() {
 }
 
 function nextQuestion() { currentIdx++; showQuestion(); }
-function exitQuiz() { if (confirm('테스트를 중단하시겠습니까? 푼 문항만 기록에 저장됩니다.')) showResult(true); }
 
-function saveQuizRecord(totalCount, correctCount) {
+function pauseQuiz(isFromBeforeUnload = false, redirectScreen = 'setup-screen') {
+    if (isSubmitted) {
+        currentIdx++;
+        isSubmitted = false;
+        if (currentIdx >= quizWords.length) {
+            showResult();
+            return;
+        }
+    }
+    stopTimer();
+    saveQuizRecord('paused');
+    if (!isFromBeforeUnload) {
+        history.replaceState({ screen: redirectScreen }, '', '');
+        showScreen(redirectScreen, false);
+    }
+}
+
+function exitQuiz() { 
+    if (confirm('테스트를 중단하시겠습니까? 푼 문항만 기록에 저장됩니다.')) {
+        if (isSubmitted) {
+            currentIdx++;
+            isSubmitted = false;
+        }
+        showResult(true);
+    }
+}
+
+function saveQuizRecord(status) {
     try {
         const historyData = JSON.parse(localStorage.getItem('quizHistory') || '[]');
         const now = new Date();
         const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
         
-        historyData.unshift({
+        const record = {
+            id: currentHistoryId,
             date: dateStr,
+            timestamp: now.getTime(),
             type: currentTestTypeLabel,
+            testMode: currentTestMode,
             days: currentTestDays,
-            total: totalCount,
-            correct: correctCount,
-            time: getFormattedTime() 
-        });
+            total: quizWords.length,
+            correct: score,
+            time: getFormattedTime(),
+            status: status, 
+            quizWords: quizWords,
+            currentIdx: currentIdx,
+            totalSeconds: totalSeconds,
+            quizReviewData: quizReviewData,
+            hasResumed: false 
+        };
+
+        const existingIdx = historyData.findIndex(h => h.id === currentHistoryId);
+        if (existingIdx !== -1) {
+            record.hasResumed = historyData[existingIdx].hasResumed; 
+            historyData[existingIdx] = record;
+        } else {
+            historyData.unshift(record);
+        }
         localStorage.setItem('quizHistory', JSON.stringify(historyData));
     } catch (e) {}
 }
 
-function showResult(isInterrupted = false) {
+function showResult(isStopped = false) {
     stopTimer(); 
     showScreen('result-screen', false);
-    const totalAttempted = isInterrupted ? (isSubmitted ? currentIdx + 1 : currentIdx) : (quizWords ? quizWords.length : 0);
+    
+    const totalAttempted = quizReviewData.length;
     const timeTakenStr = getFormattedTime();
 
     const scoreEl = document.getElementById('result-score');
     if (scoreEl) {
-        scoreEl.innerText = isInterrupted 
+        scoreEl.innerText = isStopped 
             ? `⏱️ 소요 시간: ${timeTakenStr}\n테스트가 중단되었습니다.\n푼 문제: ${totalAttempted}문제 중 ${score}문제 맞춤`
             : `⏱️ 소요 시간: ${timeTakenStr}\n테스트 완료!\n총 ${totalAttempted}문제 중 ${score}문제 맞추셨습니다.`;
     }
-    if (totalAttempted > 0) saveQuizRecord(totalAttempted, score);
+    if (totalAttempted > 0 || isStopped) saveQuizRecord(isStopped ? 'stopped' : 'completed');
     
     buildReviewList();
     checkWrongHistory();
@@ -706,31 +762,130 @@ function viewWordList() {
     content.innerHTML = html;
 }
 
+function processHistoryExpirations() {
+    let historyData = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+    const now = Date.now();
+    let changed = false;
+    
+    historyData.forEach(h => {
+        if (h.status === 'paused') {
+            if (now - h.timestamp > 12 * 60 * 60 * 1000) {
+                h.status = 'stopped';
+                changed = true;
+            }
+        }
+    });
+    
+    if (changed) {
+        localStorage.setItem('quizHistory', JSON.stringify(historyData));
+    }
+    return historyData;
+}
+
 function viewHistory() {
     const content = document.getElementById('history-content');
     if (!content) return;
-    let historyData = [];
-    try { historyData = JSON.parse(localStorage.getItem('quizHistory') || '[]'); } catch (e) {}
-
+    
+    let historyData = processHistoryExpirations();
     if (historyData.length === 0) { content.innerHTML = '<p>저장된 테스트 기록이 없습니다.</p>'; return; }
 
-    content.innerHTML = historyData.map(h => `
-        <div class="history-item">
-            <strong>일시:</strong> ${h.date || ''} (소요 시간: ${h.time || '기록 없음'})<br>
-            <strong>종류:</strong> ${h.type || '동의어 철자'} (DAY ${h.days || ''})<br>
-            <strong>결과:</strong> ${h.total || 0}문제 중 ${h.correct || 0}문제 정답 (${h.total ? Math.round((h.correct/h.total)*100) : 0}%)
-        </div>
-    `).join('');
+    const now = Date.now();
+    
+    content.innerHTML = historyData.map(h => {
+        let statusBadge = '';
+        let actionBtn = '';
+        
+        if (h.status === 'paused') {
+            statusBadge = '<span style="color:var(--primary); font-weight:bold;">[일시중지]</span>';
+            actionBtn = `<button onclick="resumePausedQuiz(${h.id})" class="btn-primary" style="padding: 5px 10px; margin-top: 10px; font-size: 0.85rem; width: auto;">이어서 풀기</button>`;
+        } else if (h.status === 'stopped') {
+            statusBadge = '<span style="color:var(--danger); font-weight:bold;">[중단]</span>';
+            if (now - h.timestamp <= 24 * 60 * 60 * 1000 && !h.hasResumed) {
+                actionBtn = `<button onclick="solveRemainingQuiz(${h.id})" class="btn-secondary" style="padding: 5px 10px; margin-top: 10px; font-size: 0.85rem; width: auto;">남은 문제 마저 풀기</button>`;
+            }
+        } else {
+            statusBadge = '<span style="color:var(--success); font-weight:bold;">[완료]</span>';
+        }
+        
+        const solvedCount = h.quizReviewData ? h.quizReviewData.length : h.correct;
+        const displayTotal = h.status === 'paused' ? h.total : (h.status === 'completed' ? h.total : solvedCount);
+        const displayCorrect = h.correct;
+        
+        return `
+            <div class="history-item">
+                <div style="margin-bottom: 5px;">${statusBadge} <strong>일시:</strong> ${h.date || ''} (소요 시간: ${h.time || '기록 없음'})</div>
+                <div><strong>종류:</strong> ${h.type || '동의어 철자'} (DAY ${h.days || ''})</div>
+                <div><strong>결과:</strong> ${displayTotal}문제 중 ${displayCorrect}문제 정답 (${displayTotal ? Math.round((displayCorrect/displayTotal)*100) : 0}%)</div>
+                ${actionBtn}
+            </div>
+        `;
+    }).join('');
+}
+
+function resumePausedQuiz(id) {
+    const historyData = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+    const record = historyData.find(h => h.id === id);
+    if (!record) return;
+    
+    currentHistoryId = record.id;
+    quizWords = record.quizWords;
+    currentIdx = record.currentIdx;
+    score = record.correct;
+    quizReviewData = record.quizReviewData || [];
+    totalSeconds = record.totalSeconds || 0;
+    currentTestMode = record.testMode;
+    currentTestTypeLabel = record.type;
+    currentTestDays = record.days;
+    
+    navigateTo('quiz-screen');
+    startTimer(true); 
+    showQuestion();
+}
+
+function solveRemainingQuiz(id) {
+    const historyData = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+    const record = historyData.find(h => h.id === id);
+    if (!record) return;
+    
+    record.hasResumed = true;
+    localStorage.setItem('quizHistory', JSON.stringify(historyData));
+
+    currentHistoryId = Date.now();
+    const startIdx = record.quizReviewData ? record.quizReviewData.length : record.currentIdx;
+    quizWords = record.quizWords.slice(startIdx);
+    
+    currentIdx = 0;
+    score = 0;
+    quizReviewData = [];
+    totalSeconds = 0;
+    currentTestMode = record.testMode;
+    currentTestTypeLabel = record.type;
+    currentTestDays = record.days;
+    
+    if (quizWords.length === 0) {
+        alert("남은 문제가 없습니다.");
+        return;
+    }
+    
+    navigateTo('quiz-screen');
+    startTimer(); 
+    showQuestion();
 }
 
 function exportHistory() {
-    let historyData = [];
-    try { historyData = JSON.parse(localStorage.getItem('quizHistory') || '[]'); } catch (e) {}
+    let historyData = JSON.parse(localStorage.getItem('quizHistory') || '[]');
     if (historyData.length === 0) { alert('내보낼 기록이 없습니다.'); return; }
 
     let textContent = "영어 단어 테스트 기록\n====================\n\n";
     historyData.forEach((h, idx) => {
-        textContent += `[기록 ${idx + 1}]\n일시: ${h.date || ''} (소요시간: ${h.time || '없음'})\n종류: ${h.type || ''} (DAY: ${h.days || ''})\n결과: ${h.total || 0}문제 중 ${h.correct || 0}문제 맞춤 (${h.total ? Math.round((h.correct/h.total)*100) : 0}%)\n--------------------\n`;
+        let statusStr = '';
+        if (h.status === 'paused') statusStr = '[일시중지] ';
+        else if (h.status === 'stopped') statusStr = '[중단] ';
+        
+        const solvedCount = h.quizReviewData ? h.quizReviewData.length : h.correct;
+        const displayTotal = h.status === 'paused' ? h.total : (h.status === 'completed' ? h.total : solvedCount);
+        
+        textContent += `[기록 ${idx + 1}]\n일시: ${h.date || ''} (소요시간: ${h.time || '없음'})\n상태: ${statusStr || '완료'}\n종류: ${h.type || ''} (DAY: ${h.days || ''})\n결과: ${displayTotal}문제 중 ${h.correct || 0}문제 맞춤 (${displayTotal ? Math.round((h.correct/displayTotal)*100) : 0}%)\n--------------------\n`;
     });
 
     const blob = new Blob([textContent], { type: "text/plain;charset=utf-8" });

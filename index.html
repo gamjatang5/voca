@@ -9,7 +9,7 @@
 <body>
 
     <div id="global-header" class="top-bar">
-        <button id="nav-back-btn" onclick="handleHeaderBack()" class="icon-btn hidden" title="뒤로가기">←</button>
+        <button id="nav-home-btn" onclick="handleHeaderHome()" class="icon-btn hidden" title="홈으로">⌂</button>
         <div id="timer-display" class="timer-text hidden">00:00</div>
         <div style="flex-grow: 1;"></div>
         <button id="toc-btn" onclick="toggleTOC()" class="icon-btn hidden" title="목차">☰</button>
@@ -73,7 +73,10 @@
     <div id="quiz-screen" class="card view-screen hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3 id="quiz-progress" style="margin: 0; font-size: 1rem; color: var(--secondary);"></h3>
-            <button onclick="exitQuiz()" class="btn-danger" style="width: auto; margin: 0; padding: 5px 12px; font-size: 0.85rem;">테스트 중단</button>
+            <div style="display: flex; gap: 8px;">
+                <button onclick="pauseQuiz(false, 'setup-screen')" class="btn-secondary" style="width: auto; margin: 0; padding: 5px 12px; font-size: 0.85rem;">일시중지</button>
+                <button onclick="exitQuiz()" class="btn-danger" style="width: auto; margin: 0; padding: 5px 12px; font-size: 0.85rem;">테스트 중단</button>
+            </div>
         </div>
         
         <div class="quiz-info">
